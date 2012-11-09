@@ -1,6 +1,8 @@
 # visibleconsole.js #
 - - - - -
 
+Sometimes you need to see the contents of the console in places that aren't, well, the console. Maybe you're working on an iPad, or maybe you've got a need nobody anticipated. This will output the (string only) contents of the console to a visible element in your markup.
+
 ## Usage ###
 
 Include visibleconsole.js in your project.
