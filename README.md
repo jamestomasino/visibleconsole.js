@@ -19,7 +19,7 @@ It will also create an iFrame with an id of #visibleconsoleiframe. This is used 
 
     VisibleConsole.disable();
     
-Both #console and #visibleconsoleiframe will be removed from markup and console operations will be returned to the browser's window.console.log.
+Both #visibleconsole and #visibleconsoleiframe will be removed from markup and console operations will be returned to the browser's window.console.log.
     
 ### To Style ####
 
