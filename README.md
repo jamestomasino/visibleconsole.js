@@ -13,7 +13,7 @@ Include visibleconsole.js in your project.
     
 If there is an element with the name #visibleconsole, visibleconsole.js will use it for the output of all future console.log calls. If no #visibleconsole element exists, it will create one at the bottom of your body.
 
-It will also create an iFrame with an id of #visibleconsoleiframe. This is used to maintain ongoing normal console operations, and is leveraged if you disable visibleconsole.js.
+It will also create an iFrame with an id of #visibleconsoleiframe. This is used to maintain ongoing normal console operations, and is leveraged until you disable visibleconsole.js.
     
 ### To Disable ####
 
