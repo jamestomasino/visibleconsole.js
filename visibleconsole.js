@@ -64,6 +64,12 @@
 
 				}
 			}
+
+			window.onerror = function (msg, url, linenumber) {
+				window.console.log('[ERROR] ' + msg + ' (' + url + ' Line: ' + linenumber + ')');
+				return true;
+			}
+
 		}
 	}
 
@@ -72,6 +78,8 @@
 			VisibleConsole._isEnabled = false;
 
 			window.console = VisibleConsole.browserVisibleConsole;
+			window.onerror = VisibleConsole.fallBackIFrame.contentWindow.onerror;
+
 			VisibleConsole.consoleEl.parentNode.removeChild(VisibleConsole.consoleEl);
 			VisibleConsole.fallBackIFrame.parentNode.removeChild(VisibleConsole.fallBackIFrame);
 			VisibleConsole.consoleEl = null;
