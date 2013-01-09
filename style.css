@@ -1,0 +1,7 @@
+#visibleconsole {
+    margin: 20px;
+    padding: 10px;
+    border: 1px solid red;
+    white-space: pre;
+    font-family: Consolas, Monaco, "Courier New", Courier, monospace;
+}
