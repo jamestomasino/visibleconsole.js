@@ -7,8 +7,6 @@
 	VisibleConsole.browserVisibleConsole;
 	VisibleConsole.browserLog;
 	VisibleConsole.consoleEl;
-	VisibleConsole.headerEl;
-	VisibleConsole.containerEl;
 	VisibleConsole.handleEl;
 	VisibleConsole.fallBackIFrame;
 
@@ -25,29 +23,12 @@
 			if (!VisibleConsole.consoleEl)  {
 				VisibleConsole.consoleEl = document.createElement('div');
 				VisibleConsole.consoleEl.id = 'visibleconsole';
-				// VisibleConsole.consoleEl.onmousedown = tzdragg.startMoving;
-				// VisibleConsole.consoleEl.onmouseup = tzdragg.stopMoving;
+				VisibleConsole.consoleEl.draggable = true;
 				document.body.appendChild(VisibleConsole.consoleEl);
 			}
 
-			//add the draggable header
-			if (VisibleConsole.consoleEl)  {
-				VisibleConsole.headerEl = document.createElement('div');
-				VisibleConsole.headerEl.id = 'header';
-				VisibleConsole.headerEl.onmousedown = tzdragg.startMoving;
-				VisibleConsole.headerEl.onmouseup = tzdragg.stopMoving;
-				document.getElementById('visibleconsole').appendChild(VisibleConsole.headerEl);
-			}
-
-			//add the resize container
-			if (VisibleConsole.consoleEl)  {
-				VisibleConsole.containerEl = document.createElement('div');
-				VisibleConsole.containerEl.id = 'container';
-				document.getElementById('visibleconsole').appendChild(VisibleConsole.containerEl);
-			}
-
 			//add the resize handle
-			if (VisibleConsole.containerEl)  {
+			if (VisibleConsole.consoleEl)  {
 				VisibleConsole.handleEl = document.createElement('div');
 				VisibleConsole.handleEl.id = 'handle';
 				document.getElementById('visibleconsole').appendChild(VisibleConsole.handleEl);
@@ -83,8 +64,7 @@
 						}
 					}
 
-					VisibleConsole.containerEl.innerHTML += output;
-					VisibleConsole.containerEl.scrollTop = VisibleConsole.containerEl.scrollHeight;
+					VisibleConsole.consoleEl.innerHTML += output;
 
 					// Output to native console
 					if (VisibleConsole.browserVisibleConsole && VisibleConsole.browserVisibleConsole.log ) {
