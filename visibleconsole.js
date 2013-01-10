@@ -25,8 +25,6 @@
 			if (!VisibleConsole.consoleEl)  {
 				VisibleConsole.consoleEl = document.createElement('div');
 				VisibleConsole.consoleEl.id = 'visibleconsole';
-				// VisibleConsole.consoleEl.onmousedown = tzdragg.startMoving;
-				// VisibleConsole.consoleEl.onmouseup = tzdragg.stopMoving;
 				document.body.appendChild(VisibleConsole.consoleEl);
 			}
 
@@ -34,7 +32,7 @@
 			if (VisibleConsole.consoleEl)  {
 				VisibleConsole.headerEl = document.createElement('div');
 				VisibleConsole.headerEl.id = 'header';
-				VisibleConsole.headerEl.onmousedown = tzdragg.startMoving;
+				VisibleConsole.headerEl.onmousedown = VisibleConsole._startMoving;
 				document.getElementById('visibleconsole').appendChild(VisibleConsole.headerEl);
 			}
 
@@ -49,7 +47,7 @@
 			if (VisibleConsole.containerEl)  {
 				VisibleConsole.handleEl = document.createElement('div');
 				VisibleConsole.handleEl.id = 'handle';
-				VisibleConsole.handleEl.onmousedown = tzdragg.startResizing;
+				VisibleConsole.handleEl.onmousedown = VisibleConsole._startResizing;
 				document.getElementById('visibleconsole').appendChild(VisibleConsole.handleEl);
 			}
 
@@ -127,6 +125,58 @@
 			VisibleConsole.fallBackIFrame = null;
 			VisibleConsole.browserLog = null;
 		}
+	};
+
+	VisibleConsole._stop = function () {
+		document.onmouseup = function(){}
+		document.onmousemove = function(){}
+	};
+
+	VisibleConsole._move = function (xpos, ypos) {
+		VisibleConsole.consoleEl.style.left = Math.max(xpos,0) + 'px';
+		VisibleConsole.consoleEl.style.top = Math.max(ypos,0) + 'px';
+	};
+
+	VisibleConsole._resize = function (w, h) {
+		VisibleConsole.consoleEl.style.pixelWidth = w;
+		VisibleConsole.consoleEl.style.pixelHeight = h;
+	};
+
+	VisibleConsole._startMoving = function (evt) {
+		evt = evt || window.event;
+		var posX = evt.clientX;
+		var posY = evt.clientY;
+		var divTop = Number(VisibleConsole.consoleEl.style.top.replace('px',''));
+		var divLeft = Number(VisibleConsole.consoleEl.style.left.replace('px',''));
+		var diffX = posX - divLeft;
+		var diffY = posY - divTop;
+
+		document.onmousemove = function (evt) {
+			evt = evt || window.event;
+			var newX = evt.clientX - diffX;
+			var newY = evt.clientY - diffY;
+			VisibleConsole._move (newX, newY);
+		}
+
+		document.onmouseup = VisibleConsole._stop;
+	};
+
+	VisibleConsole._startResizing = function (evt) {
+		evt = evt || window.event;
+		evt.stopPropagation();
+
+		var posX = evt.clientX;
+		var posY = evt.clientY;
+		var divTop = Number(VisibleConsole.consoleEl.style.top.replace('px',''));
+		var divLeft = Number(VisibleConsole.consoleEl.style.left.replace('px',''));
+
+		document.onmousemove = function(evt) {
+			evt = evt || window.event;
+			var newW = evt.clientX - divLeft;
+			var newH = evt.clientY - divTop;
+			VisibleConsole._resize(newW, newH);
+		}
+		document.onmouseup = VisibleConsole._stop;
 	};
 
 	window.VisibleConsole = VisibleConsole;
