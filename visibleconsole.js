@@ -146,7 +146,6 @@
 	VisibleConsole._stop = function () {
 		document.onmouseup = function(){};
 		document.onmousemove = function(){};
-		VisibleConsole._setSelectable(true);
 	};
 
 	VisibleConsole._move = function (xpos, ypos) {
@@ -165,6 +164,8 @@
 
 	VisibleConsole._startMoving = function (evt) {
 		evt = evt || window.event;
+		VisibleConsole._stopDefault(evt);
+
 		var posX = evt.clientX;
 		var posY = evt.clientY;
 		var divTop = Number(VisibleConsole.consoleEl.style.top.replace('px',''));
@@ -172,10 +173,8 @@
 		var diffX = posX - divLeft;
 		var diffY = posY - divTop;
 
-		VisibleConsole._setSelectable(false);
-
-
 		document.onmousemove = function (evt) {
+			VisibleConsole._stopDefault(evt);
 			evt = evt || window.event;
 			var newX = evt.clientX - diffX;
 			var newY = evt.clientY - diffY;
@@ -187,17 +186,16 @@
 
 	VisibleConsole._startResizing = function (evt) {
 		evt = evt || window.event;
-		evt.stopPropagation();
+		VisibleConsole._stopDefault(evt);
 
 		var posX = evt.clientX;
 		var posY = evt.clientY;
 		var divTop = Number(VisibleConsole.consoleEl.style.top.replace('px',''));
 		var divLeft = Number(VisibleConsole.consoleEl.style.left.replace('px',''));
 
-		VisibleConsole._setSelectable(false);
-
 		document.onmousemove = function(evt) {
 			evt = evt || window.event;
+			VisibleConsole._stopDefault(evt);
 			var newW = evt.clientX - divLeft;
 			var newH = evt.clientY - divTop;
 			VisibleConsole._resize(newW, newH);
@@ -205,22 +203,15 @@
 		document.onmouseup = VisibleConsole._stop;
 	};
 
-	VisibleConsole._setSelectable = function (val) {
-
-		var s = VisibleConsole.consoleOutputEl.style;
-		if (val) {
-			s.userSelect = "text";
-			s.webkitUserSelect = "text";
-			s.MozUserSelect = "text";
-			VisibleConsole.consoleOutputEl.setAttribute("unselectable", "off"); // For IE and Opera
-		} else {
-			s.userSelect = "none";
-			s.webkitUserSelect = "none";
-			s.MozUserSelect = "none";
-			VisibleConsole.consoleOutputEl.setAttribute("unselectable", "on"); // For IE and Opera
+	VisibleConsole._stopDefault = function (e) {
+		if (e && e.preventDefault) {
+			e.preventDefault();
 		}
-	};
-
+		else {
+			window.event.returnValue = false;
+		}
+		return false;
+	}
 	window.VisibleConsole = VisibleConsole;
 
 })(window, document);
