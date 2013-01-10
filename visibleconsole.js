@@ -24,43 +24,48 @@
 
 			// Prepare #console element
 			VisibleConsole.consoleEl = document.getElementById('visibleconsole');
-			if (!VisibleConsole.consoleEl)  {
+			if ( !VisibleConsole.consoleEl )  {
 				VisibleConsole.consoleEl = document.createElement('div');
 				VisibleConsole.consoleEl.id = 'visibleconsole';
 				document.body.appendChild(VisibleConsole.consoleEl);
 			}
 
-			//add the draggable header div
-			if (VisibleConsole.consoleEl)  {
+			// add the draggable header div
+			VisibleConsole.headerEl = document.getElementById('visibleconsoleheader');
+			if ( !VisibleConsole.headerEl ) {
 				VisibleConsole.headerEl = document.createElement('div');
 				VisibleConsole.headerEl.id = 'visibleconsoleheader';
 				VisibleConsole.headerEl.onmousedown = VisibleConsole._startMoving;
 				document.getElementById('visibleconsole').appendChild(VisibleConsole.headerEl);
 			}
 
-			//add the console inner div
-			if (VisibleConsole.consoleEl)  {
+			// add the console inner div
+			VisibleConsole.consoleInnerEl = document.getElementById('visibleconsoleinner');
+			if ( !VisibleConsole.consoleInnerEl )  {
 				VisibleConsole.consoleInnerEl = document.createElement('div');
 				VisibleConsole.consoleInnerEl.id = 'visibleconsoleinner';
 				document.getElementById('visibleconsole').appendChild(VisibleConsole.consoleInnerEl);
 			}
 
-			//add the visible output container div
-			if (VisibleConsole.consoleInnerEl)  {
+			// add the visible output container div
+			VisibleConsole.consoleContainerEl = document.getElementById('visibleconsolecontainer');
+			if ( !VisibleConsole.consoleContainerEl )  {
 				VisibleConsole.consoleContainerEl = document.createElement('div');
 				VisibleConsole.consoleContainerEl.id = 'visibleconsolecontainer';
 				document.getElementById('visibleconsoleinner').appendChild(VisibleConsole.consoleContainerEl);
 			}
 
-			//add the visible output div
-			if (VisibleConsole.consoleContainerEl)  {
+			// add the visible output div
+			VisibleConsole.consoleOutputEl = document.getElementById('visibleconsoleoutput');
+			if ( !VisibleConsole.consoleOutputEl )  {
 				VisibleConsole.consoleOutputEl = document.createElement('div');
 				VisibleConsole.consoleOutputEl.id = 'visibleconsoleoutput';
 				document.getElementById('visibleconsolecontainer').appendChild(VisibleConsole.consoleOutputEl);
 			}
 
-			//add the resize handle div
-			if (VisibleConsole.consoleInnerEl)  {
+			// add the resize handle div
+			VisibleConsole.handleEl = document.getElementById('visibleconsolehandle');
+			if ( !VisibleConsole.handleEl )  {
 				VisibleConsole.handleEl = document.createElement('div');
 				VisibleConsole.handleEl.id = 'visibleconsolehandle';
 				VisibleConsole.handleEl.onmousedown = VisibleConsole._startResizing;
@@ -69,7 +74,7 @@
 
 			// Prepare fallback console
 			VisibleConsole.fallBackIFrame = document.getElementById('visibleconsoleiframe');
-			if ( !VisibleConsole.fallBackIFrame) {
+			if ( !VisibleConsole.fallBackIFrame ) {
 				VisibleConsole.fallBackIFrame = document.createElement('iframe');
 				VisibleConsole.fallBackIFrame.style.display = 'none';
 				VisibleConsole.fallBackIFrame.id = 'visibleconsoleiframe';
