@@ -169,6 +169,10 @@
 
 	VisibleConsole._startMoving = function (evt) {
 		evt = evt || window.event;
+
+		// Don't track right-clicks
+		if ((evt.keyCode || evt.which) == 3) return;
+
 		VisibleConsole._stopDefault(evt);
 
 		var posX = evt.clientX;
@@ -191,6 +195,10 @@
 
 	VisibleConsole._startResizing = function (evt) {
 		evt = evt || window.event;
+
+		// Don't track right-clicks
+		if ((evt.keyCode || evt.which) == 3) return;
+
 		VisibleConsole._stopDefault(evt);
 
 		var posX = evt.clientX;
