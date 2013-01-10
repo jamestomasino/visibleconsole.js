@@ -7,6 +7,9 @@
 	VisibleConsole.browserVisibleConsole;
 	VisibleConsole.browserLog;
 	VisibleConsole.consoleEl;
+	VisibleConsole.headerEl;
+	VisibleConsole.containerEl;
+	VisibleConsole.handleEl;
 	VisibleConsole.fallBackIFrame;
 
 	// Static psudo-privates
@@ -22,7 +25,32 @@
 			if (!VisibleConsole.consoleEl)  {
 				VisibleConsole.consoleEl = document.createElement('div');
 				VisibleConsole.consoleEl.id = 'visibleconsole';
+				// VisibleConsole.consoleEl.onmousedown = tzdragg.startMoving;
+				// VisibleConsole.consoleEl.onmouseup = tzdragg.stopMoving;
 				document.body.appendChild(VisibleConsole.consoleEl);
+			}
+
+			//add the draggable header
+			if (VisibleConsole.consoleEl)  {
+				VisibleConsole.headerEl = document.createElement('div');
+				VisibleConsole.headerEl.id = 'header';
+				VisibleConsole.headerEl.onmousedown = tzdragg.startMoving;
+				document.getElementById('visibleconsole').appendChild(VisibleConsole.headerEl);
+			}
+
+			//add the resize container
+			if (VisibleConsole.consoleEl)  {
+				VisibleConsole.containerEl = document.createElement('div');
+				VisibleConsole.containerEl.id = 'container';
+				document.getElementById('visibleconsole').appendChild(VisibleConsole.containerEl);
+			}
+
+			//add the resize handle
+			if (VisibleConsole.containerEl)  {
+				VisibleConsole.handleEl = document.createElement('div');
+				VisibleConsole.handleEl.id = 'handle';
+				VisibleConsole.handleEl.onmousedown = tzdragg.startResizing;
+				document.getElementById('visibleconsole').appendChild(VisibleConsole.handleEl);
 			}
 
 			// Prepare fallback console
@@ -67,7 +95,8 @@
 						}
 					}
 
-					VisibleConsole.consoleEl.innerHTML += output;
+					VisibleConsole.containerEl.innerHTML += output;
+					VisibleConsole.containerEl.scrollTop = VisibleConsole.containerEl.scrollHeight;
 
 					// Output to native console
 					if (VisibleConsole.browserVisibleConsole && VisibleConsole.browserVisibleConsole.log ) {
@@ -75,15 +104,15 @@
 					}
 
 				}
-			}
+			};
 
 			window.onerror = function (msg, url, linenumber) {
 				window.console.log('[ERROR] ' + msg + ' (' + url + ' Line: ' + linenumber + ')');
 				return true;
-			}
+			};
 
 		}
-	}
+	};
 
 	VisibleConsole.disable = function () {
 		if (VisibleConsole._isEnabled === true) {
@@ -98,7 +127,7 @@
 			VisibleConsole.fallBackIFrame = null;
 			VisibleConsole.browserLog = null;
 		}
-	}
+	};
 
 	window.VisibleConsole = VisibleConsole;
 
