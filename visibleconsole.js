@@ -8,7 +8,9 @@
 	VisibleConsole.browserLog;
 	VisibleConsole.consoleEl;
 	VisibleConsole.headerEl;
-	VisibleConsole.containerEl;
+	VisibleConsole.consoleInnerEl;
+	VisibleConsole.consoleContainerEl;
+	VisibleConsole.consoleOutputEl;
 	VisibleConsole.handleEl;
 	VisibleConsole.fallBackIFrame;
 
@@ -28,25 +30,39 @@
 				document.body.appendChild(VisibleConsole.consoleEl);
 			}
 
-			//add the draggable header
+			//add the draggable header div
 			if (VisibleConsole.consoleEl)  {
 				VisibleConsole.headerEl = document.createElement('div');
-				VisibleConsole.headerEl.id = 'header';
+				VisibleConsole.headerEl.id = 'visibleconsoleheader';
 				VisibleConsole.headerEl.onmousedown = VisibleConsole._startMoving;
 				document.getElementById('visibleconsole').appendChild(VisibleConsole.headerEl);
 			}
 
-			//add the resize container
+			//add the console inner div
 			if (VisibleConsole.consoleEl)  {
-				VisibleConsole.containerEl = document.createElement('div');
-				VisibleConsole.containerEl.id = 'container';
-				document.getElementById('visibleconsole').appendChild(VisibleConsole.containerEl);
+				VisibleConsole.consoleInnerEl = document.createElement('div');
+				VisibleConsole.consoleInnerEl.id = 'visibleconsoleinner';
+				document.getElementById('visibleconsole').appendChild(VisibleConsole.consoleInnerEl);
 			}
 
-			//add the resize handle
-			if (VisibleConsole.containerEl)  {
+			//add the visible output container div
+			if (VisibleConsole.consoleInnerEl)  {
+				VisibleConsole.consoleContainerEl = document.createElement('div');
+				VisibleConsole.consoleContainerEl.id = 'visibleconsolecontainer';
+				document.getElementById('visibleconsoleinner').appendChild(VisibleConsole.consoleContainerEl);
+			}
+
+			//add the visible output div
+			if (VisibleConsole.consoleContainerEl)  {
+				VisibleConsole.consoleOutputEl = document.createElement('div');
+				VisibleConsole.consoleOutputEl.id = 'visibleconsoleoutput';
+				document.getElementById('visibleconsolecontainer').appendChild(VisibleConsole.consoleOutputEl);
+			}
+
+			//add the resize handle div
+			if (VisibleConsole.consoleInnerEl)  {
 				VisibleConsole.handleEl = document.createElement('div');
-				VisibleConsole.handleEl.id = 'handle';
+				VisibleConsole.handleEl.id = 'visibleconsolehandle';
 				VisibleConsole.handleEl.onmousedown = VisibleConsole._startResizing;
 				document.getElementById('visibleconsole').appendChild(VisibleConsole.handleEl);
 			}
@@ -93,8 +109,8 @@
 						}
 					}
 
-					VisibleConsole.containerEl.innerHTML += output;
-					VisibleConsole.containerEl.scrollTop = VisibleConsole.containerEl.scrollHeight;
+					VisibleConsole.consoleOutputEl.innerHTML += output;
+					VisibleConsole.consoleOutputEl.scrollTop = VisibleConsole.consoleOutputEl.scrollHeight;
 
 					// Output to native console
 					if (VisibleConsole.browserVisibleConsole && VisibleConsole.browserVisibleConsole.log ) {
@@ -141,6 +157,10 @@
 	VisibleConsole._resize = function (w, h) {
 		VisibleConsole.consoleEl.style.pixelWidth = w;
 		VisibleConsole.consoleEl.style.pixelHeight = h;
+		var vin = VisibleConsole.consoleInnerEl.offsetHeight;
+		var	vhe = VisibleConsole.headerEl.offsetHeight;
+		var vop = (vin-vhe);
+		VisibleConsole.consoleOutputEl.style.height = vop + 'px';
 	};
 
 	VisibleConsole._startMoving = function (evt) {
@@ -160,7 +180,7 @@
 			var newX = evt.clientX - diffX;
 			var newY = evt.clientY - diffY;
 			VisibleConsole._move (newX, newY);
-		}
+		};
 
 		document.onmouseup = VisibleConsole._stop;
 	};
@@ -181,23 +201,23 @@
 			var newW = evt.clientX - divLeft;
 			var newH = evt.clientY - divTop;
 			VisibleConsole._resize(newW, newH);
-		}
+		};
 		document.onmouseup = VisibleConsole._stop;
 	};
 
 	VisibleConsole._setSelectable = function (val) {
 
-		var s = VisibleConsole.containerEl.style;
+		var s = VisibleConsole.consoleOutputEl.style;
 		if (val) {
 			s.userSelect = "text";
 			s.webkitUserSelect = "text";
 			s.MozUserSelect = "text";
-			VisibleConsole.containerEl.setAttribute("unselectable", "off"); // For IE and Opera
+			VisibleConsole.consoleOutputEl.setAttribute("unselectable", "off"); // For IE and Opera
 		} else {
 			s.userSelect = "none";
 			s.webkitUserSelect = "none";
 			s.MozUserSelect = "none";
-			VisibleConsole.containerEl.setAttribute("unselectable", "on"); // For IE and Opera
+			VisibleConsole.consoleOutputEl.setAttribute("unselectable", "on"); // For IE and Opera
 		}
 	};
 
