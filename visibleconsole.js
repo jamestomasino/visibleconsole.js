@@ -128,8 +128,9 @@
 	};
 
 	VisibleConsole._stop = function () {
-		document.onmouseup = function(){}
-		document.onmousemove = function(){}
+		document.onmouseup = function(){};
+		document.onmousemove = function(){};
+		VisibleConsole._setSelectable(true);
 	};
 
 	VisibleConsole._move = function (xpos, ypos) {
@@ -151,6 +152,9 @@
 		var diffX = posX - divLeft;
 		var diffY = posY - divTop;
 
+		VisibleConsole._setSelectable(false);
+
+
 		document.onmousemove = function (evt) {
 			evt = evt || window.event;
 			var newX = evt.clientX - diffX;
@@ -170,6 +174,8 @@
 		var divTop = Number(VisibleConsole.consoleEl.style.top.replace('px',''));
 		var divLeft = Number(VisibleConsole.consoleEl.style.left.replace('px',''));
 
+		VisibleConsole._setSelectable(false);
+
 		document.onmousemove = function(evt) {
 			evt = evt || window.event;
 			var newW = evt.clientX - divLeft;
@@ -177,6 +183,22 @@
 			VisibleConsole._resize(newW, newH);
 		}
 		document.onmouseup = VisibleConsole._stop;
+	};
+
+	VisibleConsole._setSelectable = function (val) {
+
+		var s = VisibleConsole.containerEl.style;
+		if (val) {
+			s.userSelect = "text";
+			s.webkitUserSelect = "text";
+			s.MozUserSelect = "text";
+			VisibleConsole.containerEl.setAttribute("unselectable", "off"); // For IE and Opera
+		} else {
+			s.userSelect = "none";
+			s.webkitUserSelect = "none";
+			s.MozUserSelect = "none";
+			VisibleConsole.containerEl.setAttribute("unselectable", "on"); // For IE and Opera
+		}
 	};
 
 	window.VisibleConsole = VisibleConsole;
