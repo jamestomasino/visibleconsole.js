@@ -157,6 +157,10 @@
 	VisibleConsole._resize = function (w, h) {
 		VisibleConsole.consoleEl.style.pixelWidth = w;
 		VisibleConsole.consoleEl.style.pixelHeight = h;
+		var vin = VisibleConsole.consoleInnerEl.offsetHeight;
+		var	vhe = VisibleConsole.headerEl.offsetHeight;
+		var vop = (vin-vhe);
+		VisibleConsole.consoleOutputEl.style.height = vop + 'px';
 	};
 
 	VisibleConsole._startMoving = function (evt) {
@@ -176,7 +180,7 @@
 			var newX = evt.clientX - diffX;
 			var newY = evt.clientY - diffY;
 			VisibleConsole._move (newX, newY);
-		}
+		};
 
 		document.onmouseup = VisibleConsole._stop;
 	};
@@ -197,23 +201,23 @@
 			var newW = evt.clientX - divLeft;
 			var newH = evt.clientY - divTop;
 			VisibleConsole._resize(newW, newH);
-		}
+		};
 		document.onmouseup = VisibleConsole._stop;
 	};
 
 	VisibleConsole._setSelectable = function (val) {
 
-		var s = VisibleConsole.containerEl.style;
+		var s = VisibleConsole.consoleOutputEl.style;
 		if (val) {
 			s.userSelect = "text";
 			s.webkitUserSelect = "text";
 			s.MozUserSelect = "text";
-			VisibleConsole.containerEl.setAttribute("unselectable", "off"); // For IE and Opera
+			VisibleConsole.consoleOutputEl.setAttribute("unselectable", "off"); // For IE and Opera
 		} else {
 			s.userSelect = "none";
 			s.webkitUserSelect = "none";
 			s.MozUserSelect = "none";
-			VisibleConsole.containerEl.setAttribute("unselectable", "on"); // For IE and Opera
+			VisibleConsole.consoleOutputEl.setAttribute("unselectable", "on"); // For IE and Opera
 		}
 	};
 
