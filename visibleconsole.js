@@ -44,7 +44,7 @@
 			window.console = {
 				log: function () {
 
-					var output = "";
+					var output = "", strArg;
 
 					for (var i = 0; i < arguments.length; ++i)
 					{
@@ -52,6 +52,18 @@
 							output += arguments[i];
 							if (i < arguments.length - 1) output += ' ';
 							else output += "\n";
+						} else {
+							try {
+								strArg = arguments[i].toString();
+								output += strArg;
+								if (i < arguments.length - 1) output += ' ';
+								else output += "\n";
+							} catch (e) {
+								strArg = Object.prototype.toString.call(arguments[i]);
+								output += strArg;
+								if (i < arguments.length - 1) output += ' ';
+								else output += "\n";
+							}
 						}
 					}
 
