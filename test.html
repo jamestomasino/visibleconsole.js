@@ -8,41 +8,77 @@
 <script src="visibleconsole.js"></script>
 
 <script type="text/javascript">
+
+var posX, posY, a, divTop, divLeft, divTop, divLeft, diffX, diffY, aX, aY, divWidth, divHeight, aW, aH, i = 1;
+
 function $(el){
     return document.getElementById(el);
 }
-	var tzdragg = function(){
+	var tzdragg = function() {
 	    return {
-	        move : function(divid,xpos,ypos){
-	            var a = $(divid);
-	            $(divid).style.left = xpos + 'px';
-	            $(divid).style.top = ypos + 'px';
+	        move : function(divid, xpos, ypos) {
+	            a = $(divid);
+	            $(divid).style.left = Math.max(xpos,0) + 'px';
+	            $(divid).style.top = Math.max(ypos,0) + 'px';
 	        },
-	        startMoving : function(evt){
-	        	console.log('start moving console');
+	        resize : function(divid, aW, aH) {
+	            a = $(divid);
+	            $(divid).style.pixelWidth = aW;
+	            $(divid).style.pixelHeight = aH;
+	        },
+	        startMoving : function(evt) {
 	            evt = evt || window.event;
-	            var posX = evt.clientX,
-	                posY = evt.clientY,
-	                a = $('header'),
-	            divTop = a.style.top,
+	            posX = evt.clientX;
+	            posY = evt.clientY;
+	            a = $('visibleconsole');
+	            divTop = a.style.top;
+	            divLeft = a.style.left;
+	            divTop = divTop.replace('px','');
+	            divLeft = divLeft.replace('px',''),
+	            diffX = posX - divLeft;
+	            diffY = posY - divTop;
+
+	            document.onmousemove = function(evt) {
+	                evt = evt || window.event;
+	                posX = evt.clientX;
+	                posY = evt.clientY;
+	                aX = posX - diffX;
+	                aY = posY - diffY;
+	                tzdragg.move('visibleconsole', aX, aY);
+	            }
+	            document.onmouseup = tzdragg.stop;
+	        },
+	        startResizing : function(evt) {
+	        	console.log('mousedown');
+	            evt = evt || window.event;
+	            evt.stopPropagation();
+
+	            posX = evt.clientX;
+	            posY = evt.clientY;
+	            console.log(posX,posY);
+	            a = $('visibleconsole');
+	            divTop = a.style.top;
 	            divLeft = a.style.left;
 	            divTop = divTop.replace('px','');
 	            divLeft = divLeft.replace('px','');
-	            var diffX = posX - divLeft,
-	                diffY = posY - divTop;
-	            document.onmousemove = function(evt){
-	            	console.log('moving console');
+
+	            document.onmousemove = function(evt) {
+	            	i++;
+	            	console.log('resizing: ' + i);
 	                evt = evt || window.event;
-	                var posX = evt.clientX,
-	                    posY = evt.clientY,
-	                    aX = posX - diffX,
-	                    aY = posY - diffY;
-	                tzdragg.move('visibleconsole',aX,aY);
+	                posX = evt.clientX;
+	                posY = evt.clientY;
+	                aW = posX - divLeft;
+	                aH = posY - divTop;
+	                console.log(posY, divLeft, aH);
+	                tzdragg.resize('visibleconsole', aW, aH);
 	            }
+	            document.onmouseup = tzdragg.stop;
 	        },
-	        stopMoving : function(){
-            	console.log('stop moving console');
-	            var a = document.createElement('script');
+	        stop : function() {
+	        	console.log('mouseup');
+	            a = document.createElement('script');
+	            document.onmouseup = function(){}
 	            document.onmousemove = function(){}
 	        },
 	    }
@@ -55,61 +91,68 @@ function $(el){
 
     #visibleconsole {
     	position: absolute;
-	    margin: 20px;
-	    padding: 10px;
-	    width: 80%;
-	    height: 40%;
+    	top: 0;
+    	left: 0;
+	    margin: 0;
+	    width: 800px;
+	    height: 300px;
+    	font-family: Consolas, Monaco, "Courier New", Courier, monospace;
+    	color: 666;
     	border: 1px solid red;
 	    white-space: pre;
 	    word-wrap: break-word;
-    	font-family: Consolas, Monaco, "Courier New", Courier, monospace;
     	overflow: hidden;
     	z-index: 9999;
-
-    	-webkit-touch-callout: none;
-    	-webkit-user-select: none;
-    	-khtml-user-select: none;
-    	-moz-user-select: none;
-    	-ms-user-select: none;
-    	user-select: none;
+    	opacity: 0.8;
+    	-webkit-box-sizing: border-box;
+    	-moz-box-sizing: border-box;
+    	box-sizing: border-box;
     }
 
-	#header {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 30px;
-		background: blue;
-		z-index: 9999;
-	}
+		#header {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 30px;
+			background: gray;
+			z-index: 9999;
+		}
 
-    #container {
-    	position: relative;
-    	top: 0;
-    	left: 0;
-    	width: 100%;
-    	height: 100%;
-    	overflow: scroll;
-    	-webkit-user-select: text;  /* Chrome all / Safari all */
-    	  -moz-user-select: text;     /* Firefox all */
-    	  -ms-user-select: text;      /* IE 10+ */
+	    #container {
+	    	width: 100%;
+	    	height: 100%;
+	    	overflow: scroll;
+	    	-webkit-user-select: text;  /* Chrome all / Safari all */
+	    	-moz-user-select: text;     /* Firefox all */
+	    	-ms-user-select: text;      /* IE 10+ */
+			/* No support for these yet, use at own risk */
+	    	-o-user-select: text;
+	    	user-select: text;
+	    	-webkit-box-sizing: border-box;
+	    	-moz-box-sizing: border-box;
+	    	box-sizing: border-box;
+	    }
 
-    	  /* No support for these yet, use at own risk */
-    	  -o-user-select: text;
-    	  user-select: text;
-    	z-index: 999;
-    }
+	    ::-webkit-scrollbar {
+	        -webkit-appearance: none;
+	        width: 7px;
+	    }
+	    ::-webkit-scrollbar-thumb {
+	        border-radius: 4px;
+	        background-color: rgba(0,0,0,.5);
+	        -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+	        padding-bottom: 55px;
+	    }
 
-    #handle {
-    	position: absolute;
-    	bottom: 0;
-    	right: 0;
-    	width: 50px;
-    	height: 50px;
-    	background: blue;
-    	z-index: 9999;
-    }
+	    #handle {
+	    	position: absolute;
+	    	bottom: 0;
+	    	right: 0;
+	    	width: 20px;
+	    	height: 20px;
+	    	z-index: 9999;
+	    }
 
 </style>
 <body>

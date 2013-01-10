@@ -35,7 +35,6 @@
 				VisibleConsole.headerEl = document.createElement('div');
 				VisibleConsole.headerEl.id = 'header';
 				VisibleConsole.headerEl.onmousedown = tzdragg.startMoving;
-				VisibleConsole.headerEl.onmouseup = tzdragg.stopMoving;
 				document.getElementById('visibleconsole').appendChild(VisibleConsole.headerEl);
 			}
 
@@ -50,6 +49,7 @@
 			if (VisibleConsole.containerEl)  {
 				VisibleConsole.handleEl = document.createElement('div');
 				VisibleConsole.handleEl.id = 'handle';
+				VisibleConsole.handleEl.onmousedown = tzdragg.startResizing;
 				document.getElementById('visibleconsole').appendChild(VisibleConsole.handleEl);
 			}
 
