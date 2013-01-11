@@ -35,6 +35,7 @@
 			if ( !VisibleConsole.headerEl ) {
 				VisibleConsole.headerEl = document.createElement('div');
 				VisibleConsole.headerEl.id = 'visibleconsoleheader';
+				VisibleConsole.headerEl.innerHTML = '~VisibleConsole~';
 				VisibleConsole.headerEl.onmousedown = VisibleConsole._startMoving;
 				document.getElementById('visibleconsole').appendChild(VisibleConsole.headerEl);
 			}
@@ -224,7 +225,7 @@
 			window.event.returnValue = false;
 		}
 		return false;
-	}
+	};
 	window.VisibleConsole = VisibleConsole;
 
 })(window, document);
