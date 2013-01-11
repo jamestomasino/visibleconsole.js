@@ -35,6 +35,7 @@
 			if ( !VisibleConsole.headerEl ) {
 				VisibleConsole.headerEl = document.createElement('div');
 				VisibleConsole.headerEl.id = 'visibleconsoleheader';
+				VisibleConsole.headerEl.innerHTML = '~VisibleConsole~';
 				VisibleConsole.headerEl.onmousedown = VisibleConsole._startMoving;
 				document.getElementById('visibleconsole').appendChild(VisibleConsole.headerEl);
 			}
@@ -98,18 +99,18 @@
 						if (typeof(arguments[i]) == 'string') {
 							output += arguments[i];
 							if (i < arguments.length - 1) output += ' ';
-							else output += "\n";
+							else output += "<hr>\n";
 						} else {
 							try {
 								strArg = arguments[i].toString();
 								output += strArg;
 								if (i < arguments.length - 1) output += ' ';
-								else output += "\n";
+								else output += "<hr>\n";
 							} catch (e) {
 								strArg = Object.prototype.toString.call(arguments[i]);
 								output += strArg;
 								if (i < arguments.length - 1) output += ' ';
-								else output += "\n";
+								else output += "<hr>\n";
 							}
 						}
 					}
@@ -224,7 +225,7 @@
 			window.event.returnValue = false;
 		}
 		return false;
-	}
+	};
 	window.VisibleConsole = VisibleConsole;
 
 })(window, document);
