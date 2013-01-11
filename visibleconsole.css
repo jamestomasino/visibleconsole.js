@@ -1,3 +1,4 @@
+
 #visibleconsole {
 	position: absolute;
 	top: 0;
@@ -14,7 +15,6 @@
 	overflow: hidden;
 	z-index: 9999;
 	opacity: 0.9;
-	resize: both;
 	background: white;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
@@ -110,5 +110,13 @@
 	height: 20px;
 	cursor: se-resize;
 	z-index: 9999;
+}
+
+.visibleconsoleline {
+	position: absolute;
+	height: 0px;
+	border-width: 1px 0px 0px 0px;
+	border-style: solid;
+	border-color: #666;
 }
 
