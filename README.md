@@ -5,7 +5,7 @@ Sometimes you need to see the contents of the console when you don't have access
 
 ## Example ##
 
-Take a look at a working example [here](example/example.html).
+Take a look at a working example [here](http://jamestomasino.github.com/visibleconsole.js/).
 
 
 ## Usage ###
@@ -33,7 +33,7 @@ Both all created markup will be removed from your DOM and console operations wil
     
 ### To Style ####
 
-VisibleConsole [creates a number of elements in your DOM](#Structure) that can be styled with CSS. The [example stylesheet](example/style.css) provides a full-featured starting point for your customization.
+VisibleConsole [creates a number of elements in your DOM](#Structure) that can be styled with CSS. The included [stylesheet](style.css) shows a full-featured starting point for your customization.
 
 ### Structure ###
 
