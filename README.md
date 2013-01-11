@@ -33,7 +33,7 @@ Both all created markup will be removed from your DOM and console operations wil
     
 ### To Style ####
 
-VisibleConsole [creates a number of elements in your DOM](#Structure) that can be styled with CSS. The included [stylesheet](style.css) shows a full-featured starting point for your customization.
+VisibleConsole [creates a number of elements in your DOM](#Structure) that can be styled with CSS. The included [stylesheet](https://github.com/jamestomasino/visibleconsole.js/blob/master/style.css) shows a full-featured starting point for your customization.
 
 ### Structure ###
 
