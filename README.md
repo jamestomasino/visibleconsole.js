@@ -7,6 +7,10 @@ Sometimes you need to see the contents of the console in places that aren't, wel
 
 Include visibleconsole.js in your project.
 
+### Example ###
+
+Take a look at a working example [here](example/example.html).
+
 ### To Enable ####
 
     VisibleConsole.enable();
