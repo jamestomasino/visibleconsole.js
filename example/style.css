@@ -19,6 +19,15 @@
 	box-sizing: border-box;
 }
 
+#visibleconsole hr {
+	margin: 0;
+	padding: 0;
+	border: 0;
+    height: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
 #visibleconsoleheader {
 	width: 100%;
 	height: 30px;
