@@ -1,3 +1,12 @@
+/*!
+ * VisibleConsole v0.2
+ * http://github.com/jamestomasino/visibleconsole.js
+ *
+ * Copyright (c) James Tomasino and Eric Emmons
+ * MIT license
+ *
+ */
+
 (function(window, document){
 	"use strict";
 
