@@ -4,15 +4,91 @@
 		<meta charset="utf-8">
 		<title>Visible Console</title>
 		<link rel="stylesheet" href="visibleconsole.css">
+		<style type="text/css">
+
+			body {
+				padding: 20px;
+				width: 1024px;
+			}
+
+			h1 {
+				margin: 0;
+				padding: 0;
+				font-family: Helvetica, Arial, Verdana;
+				font-size: 1.2em;
+				font-weight: bold;
+				color: #000;
+			}
+
+			button.logbutton {
+				font-family: Arial, Helvetica, sans-serif;
+				font-size: 14px;
+				color: #050505;
+				padding: 10px 20px;
+				background: -moz-linear-gradient(
+					top,
+					#ffffff 0%,
+					#ebebeb 50%,
+					#dbdbdb 50%,
+					#b5b5b5);
+				background: -webkit-gradient(
+					linear, left top, left bottom,
+					from(#ffffff),
+					color-stop(0.50, #ebebeb),
+					color-stop(0.50, #dbdbdb),
+					to(#b5b5b5));
+				-moz-border-radius: 10px;
+				-webkit-border-radius: 10px;
+				border-radius: 10px;
+				border: 1px solid #949494;
+				-moz-box-shadow:
+					0px 1px 3px rgba(000,000,000,0.5),
+					inset 0px 0px 2px rgba(255,255,255,1);
+				-webkit-box-shadow:
+					0px 1px 3px rgba(000,000,000,0.5),
+					inset 0px 0px 2px rgba(255,255,255,1);
+				box-shadow:
+					0px 1px 3px rgba(000,000,000,0.5),
+					inset 0px 0px 2px rgba(255,255,255,1);
+				text-shadow:
+					0px -1px 0px rgba(000,000,000,0.2),
+					0px 1px 0px rgba(255,255,255,1);
+			}
+
+		</style>
 	</head>
 	<body>
-		<div>Content</div>
+		<h1>VisibleConsole.js Demo</h1>
+		<div>
+			<p>
+				<button type="button" name="" value="" class="logbutton" onclick="enable();">Enable Visible Console</button>
+				<button type="button" name="" value="" class="logbutton" onclick="disable()">Disable Visible Console</button>
+			</p>
+
+			<p>
+				<button type="button" name="" value="" class="logbutton" onclick="testlog1()">Test Log 1</button>
+				<button type="button" name="" value="" class="logbutton" onclick="testlog2()">Test Log 2</button>
+				<button type="button" name="" value="" class="logbutton" onclick="testlog3()">Error Test Log</button>
+			</p>
+		</p>
+		</div>
 		<script src="visibleconsole.js"></script>
 		<script type="text/javascript">
 			VisibleConsole.enable();
 			console.log ('Hello World.');
 			var testObj = { "foo":"bar" };
 			console.log ( 'This is a test object: ', testObj );
+
+			function testlog1() {
+				console.log('Lorem ipsum dolor sit amet');
+			}
+
+			function testlog2() {
+				console.log('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.');
+			}
+
+			function enable()  { VisibleConsole.enable(); }
+			function disable() { VisibleConsole.disable(); }
 		</script>
 	</body>
 </html>
