@@ -39,6 +39,7 @@ VisibleConsole [creates a number of elements in your DOM](#Structure) that can b
 
 When VisibleConsole is enabled, the following elements are added to the end of your DOM.
 
+```html
 	<div id="visibleconsole">
 		<div id="visibleconsoleheader">~VisibleConsole~</div>
 		<div id="visibleconsoleinner">
@@ -49,8 +50,24 @@ When VisibleConsole is enabled, the following elements are added to the end of y
 		<div id="visibleconsolehandle"></div>
 	</div>
 	<iframe style="display: none;" id="visibleconsoleiframe"></iframe>
+```
 
-`#visibleconsoleoutput` will grow as the contents of console.log calls are displayed.
+Messages logged to the console will have the class `visibleconsolemessage`.
+
+Errors logged to the console will have the class `visibleconsoleerror` inside of `visibleconsolemessage`.
+
+For example:
+
+```html
+    <div id="visibleconsoleoutput">
+        <span class="visibleconsolemessage">Hello World.</span>
+        <span class="visibleconsolemessage">
+            <span class="visibleconsoleerror">
+                [ERROR] Uncaught ReferenceError: Example Error (index.html Line: 1)
+            </span>    
+        </span>
+    </div>
+```
 
 The iFrame with an id of `#visibleconsoleiframe` is used to maintain ongoing normal console operations, and is leveraged until you disable visibleconsole.js.
 
