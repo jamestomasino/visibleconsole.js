@@ -97,7 +97,9 @@
 			VisibleConsole.browserVisibleConsole = VisibleConsole.fallBackIFrame.contentWindow.console;
 
 			// Fix native code interpolation error on apply: http://stackoverflow.com/questions/5538972/console-log-apply-not-working-in-ie9
-			VisibleConsole.browserLog = Function.prototype.bind.call(VisibleConsole.browserVisibleConsole.log, VisibleConsole.browserVisibleConsole);
+			if (Function.prototype.bind && VisibleConsole.browserVisibleConsole && typeof VisibleConsole.browserVisibleConsole.log == "object") {
+				VisibleConsole.browserLog = Function.prototype.bind.call(VisibleConsole.browserVisibleConsole.log, VisibleConsole.browserVisibleConsole);
+			}
 
 			// Ouput to #visibleconsole
 			window.console = {
