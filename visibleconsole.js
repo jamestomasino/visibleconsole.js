@@ -80,8 +80,8 @@
 				VisibleConsole.handleEl.id = 'visibleconsolehandle';
 				VisibleConsole.handleEl.onmousedown = VisibleConsole._startResizing;
 				document.getElementById('visibleconsole').appendChild(VisibleConsole.handleEl);
-				VisibleConsole.handleEl.appendChild(VisibleConsole.createline(21, 15, 16, 20));
-				VisibleConsole.handleEl.appendChild(VisibleConsole.createline(21, 9, 10, 20));
+				VisibleConsole.handleEl.appendChild(VisibleConsole._createline(21, 15, 16, 20));
+				VisibleConsole.handleEl.appendChild(VisibleConsole._createline(21, 9, 10, 20));
 			}
 
 			// Prepare fallback console
@@ -164,7 +164,7 @@
 		}
 	};
 
-	VisibleConsole.createline = function (x1, y1, x2, y2)	{
+	VisibleConsole._createline = function (x1, y1, x2, y2)	{
 
 		var isIE = navigator.userAgent.indexOf("MSIE") > -1;
 
@@ -209,6 +209,8 @@
 	VisibleConsole._resize = function (w, h) {
 		VisibleConsole.consoleEl.style.pixelWidth = w;
 		VisibleConsole.consoleEl.style.pixelHeight = h;
+		VisibleConsole.consoleEl.style.width = w + 'px';
+		VisibleConsole.consoleEl.style.height = h + 'px';
 		var vin = VisibleConsole.consoleInnerEl.offsetHeight;
 		var	vhe = VisibleConsole.headerEl.offsetHeight;
 		var vop = (vin-vhe);

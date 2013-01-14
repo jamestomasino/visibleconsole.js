@@ -19,7 +19,7 @@
 	white-space: -hp-pre-wrap;  /*HP Printers*/
 	word-wrap: break-word;      /*IE 5+*/
 	overflow: hidden;
-	z-index: 9999;
+	z-index: 999999;
 	opacity: 0.9;
 	background: white;
 	-webkit-box-sizing: border-box;
