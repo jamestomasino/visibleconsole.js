@@ -142,7 +142,11 @@
 			};
 
 			window.onerror = function (msg, url, linenumber) {
+<<<<<<< HEAD
 				window.console.log('<span class="visibleconsoleerror">[ERROR] ' + msg + ' (' + url + ' Line: ' + linenumber + ')</span>');
+=======
+				window.console.log('<span style="color: red">[ERROR] ' + msg + ' (' + url + ' Line: ' + linenumber + ')</span>');
+>>>>>>> f00ba0d3f02d794043b855f71a82c27cd5b173a9
 				return true;
 			};
 
