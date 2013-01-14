@@ -209,6 +209,8 @@
 	VisibleConsole._resize = function (w, h) {
 		VisibleConsole.consoleEl.style.pixelWidth = w;
 		VisibleConsole.consoleEl.style.pixelHeight = h;
+		VisibleConsole.consoleEl.style.width = w + 'px';
+		VisibleConsole.consoleEl.style.height = h + 'px';
 		var vin = VisibleConsole.consoleInnerEl.offsetHeight;
 		var	vhe = VisibleConsole.headerEl.offsetHeight;
 		var vop = (vin-vhe);
