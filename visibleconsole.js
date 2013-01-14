@@ -134,7 +134,7 @@
 					VisibleConsole.consoleOutputEl.scrollTop = VisibleConsole.consoleOutputEl.scrollHeight;
 
 					// Output to native console
-					if (VisibleConsole.browserVisibleConsole && VisibleConsole.browserVisibleConsole.log ) {
+					if (VisibleConsole.browserLog && VisibleConsole.browserVisibleConsole && VisibleConsole.browserVisibleConsole.log ) {
 						VisibleConsole.browserLog.apply ( null, arguments);
 					}
 
