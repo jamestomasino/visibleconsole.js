@@ -140,7 +140,7 @@
 			};
 
 			window.onerror = function (msg, url, linenumber) {
-				window.console.log('<span style="color: red">[ERROR] ' + msg + ' (' + url + ' Line: ' + linenumber + ')</span>');
+				window.console.log('<span class="visibleconsoleerror">[ERROR] ' + msg + ' (' + url + ' Line: ' + linenumber + ')</span>');
 				return true;
 			};
 
