@@ -103,28 +103,30 @@
 			window.console = {
 				log: function () {
 
-					var output = "", strArg;
+					var output = "<span class='visibleconsolemessage'>", strArg;
 
 					for (var i = 0; i < arguments.length; ++i)
 					{
 						if (typeof(arguments[i]) == 'string') {
 							output += arguments[i];
 							if (i < arguments.length - 1) output += ' ';
-							else output += "<hr>\n";
+							else output += "\n";
 						} else {
 							try {
 								strArg = arguments[i].toString();
 								output += strArg;
 								if (i < arguments.length - 1) output += ' ';
-								else output += "<hr>\n";
+								else output += "\n";
 							} catch (e) {
 								strArg = Object.prototype.toString.call(arguments[i]);
 								output += strArg;
 								if (i < arguments.length - 1) output += ' ';
-								else output += "<hr>\n";
+								else output += "\n";
 							}
 						}
 					}
+
+					output += "</span>";
 
 					VisibleConsole.consoleOutputEl.innerHTML += output;
 					VisibleConsole.consoleOutputEl.scrollTop = VisibleConsole.consoleOutputEl.scrollHeight;

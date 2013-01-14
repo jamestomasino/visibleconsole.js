@@ -20,13 +20,13 @@
 	box-sizing: border-box;
 }
 
-#visibleconsole hr {
-	margin: 4px 0 -8px 0;
+.visibleconsolemessage {
+	display: block;
+	width: 100%;
+	min-height: 15px;
+	margin: 6px 0 2px 0;
 	padding: 0;
-	border: 0;
-    height: 0;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 #visibleconsoleheader {
