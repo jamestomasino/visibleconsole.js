@@ -3,6 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Visible Console</title>
+		<link rel="stylesheet" href="markdown.css">
 		<link rel="stylesheet" href="visibleconsole.css">
 
 		<style type="text/css">
@@ -55,8 +56,6 @@
 					0px -1px 0px rgba(000,000,000,0.2),
 					0px 1px 0px rgba(255,255,255,1);
 			}
-
-
 		</style>
 	</head>
 	<body>
@@ -76,6 +75,11 @@
 			</p>
 		</p>
 		</div>
+		<div id="content">
+		</div>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+		<script src="showdown.js"></script>
+		<script src="markdown.js"></script>
 		<script src="visibleconsole.js"></script>
 		<script type="text/javascript">
 			VisibleConsole.enable();
