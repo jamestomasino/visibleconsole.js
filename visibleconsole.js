@@ -158,6 +158,8 @@
 				return true;
 			};
 
+			VisibleConsole._resize();
+
 		}
 	};
 
@@ -221,14 +223,17 @@
 	};
 
 	VisibleConsole._resize = function (w, h) {
-		VisibleConsole.consoleEl.style.pixelWidth = w;
-		VisibleConsole.consoleEl.style.pixelHeight = h;
-		VisibleConsole.consoleEl.style.width = w + 'px';
-		VisibleConsole.consoleEl.style.height = h + 'px';
-		var vin = VisibleConsole.consoleInnerEl.offsetHeight;
-		var	vhe = VisibleConsole.headerEl.offsetHeight;
-		var vop = (vin-vhe);
-		VisibleConsole.consoleOutputEl.style.height = vop + 'px';
+		if(w !== null && h !== null) {
+			VisibleConsole.consoleEl.style.pixelWidth = w;
+			VisibleConsole.consoleEl.style.pixelHeight = h;
+			VisibleConsole.consoleEl.style.width = w + 'px';
+			VisibleConsole.consoleEl.style.height = h + 'px';
+		}
+		var wholeConsoleHeight = VisibleConsole.consoleInnerEl.offsetHeight;
+		var	headerHeight = VisibleConsole.headerEl.offsetHeight;
+		var inputHeight = VisibleConsole.consoleInputEl.offsetHeight;
+		var contentHeight = (wholeConsoleHeight - headerHeight - inputHeight);
+		VisibleConsole.consoleOutputEl.style.height = contentHeight + 'px';
 	};
 
 	VisibleConsole._startMoving = function (evt) {

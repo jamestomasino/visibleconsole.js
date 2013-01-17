@@ -82,7 +82,7 @@
 
 #visibleconsoleoutput {
 	width: 100%;
-	height: 270px;
+	height: 260px;
 	overflow: scroll;
 	overflow : auto\9; /* IE8 and below */
 	*overflow : auto; /* IE7 and below */
