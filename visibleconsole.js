@@ -158,7 +158,7 @@
 			};
 
 			VisibleConsole._resize();
-
+			VisibleConsole._move();
 		}
 	};
 
@@ -217,12 +217,22 @@
 	};
 
 	VisibleConsole._move = function (xpos, ypos) {
+		if (typeof xpos === "undefined" || typeof ypos === "undefined") {
+			var elem = (document.compatMode === "CSS1Compat") ?  document.documentElement : document.body;
+			var height = elem.clientHeight;
+			var width = elem.clientWidth;
+			var wholeConsoleHeight = VisibleConsole.consoleInnerEl.offsetHeight;
+			var wholeConsoleWidth = VisibleConsole.consoleInnerEl.offsetWidth;
+			xpos = (width >> 1) - (wholeConsoleWidth >> 1);
+			ypos = (height >> 1) - (wholeConsoleHeight >> 1);
+		}
+
 		VisibleConsole.consoleEl.style.left = Math.max(xpos,0) + 'px';
 		VisibleConsole.consoleEl.style.top = Math.max(ypos,0) + 'px';
 	};
 
 	VisibleConsole._resize = function (w, h) {
-		if(w !== null && h !== null) {
+		if (typeof w !== "undefined" && typeof h !== "undefined") {
 			VisibleConsole.consoleEl.style.pixelWidth = w;
 			VisibleConsole.consoleEl.style.pixelHeight = h;
 			VisibleConsole.consoleEl.style.width = w + 'px';
