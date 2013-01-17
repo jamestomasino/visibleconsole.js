@@ -1,7 +1,7 @@
 # visibleconsole.js #
 - - - - -
 
-Current Stable Version: v0.2
+Current Stable Version: v0.3
 
 Sometimes you need to see the contents of the console when you don't have access to it. Maybe you're working on an iPad, or a set-top-box, or maybe you've got a need nobody anticipated. This will output the contents of the console to a visible element in your markup.
 
