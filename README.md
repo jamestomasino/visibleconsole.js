@@ -1,7 +1,7 @@
 # visibleconsole.js #
 - - - - -
 
-Current Stable Version: v0.3
+Current Stable Version: v0.3.1
 
 Sometimes you need to see the contents of the console when you don't have access to it. Maybe you're working on an iPad, or a set-top-box, or maybe you've got a need nobody anticipated. This will output the contents of the console to a visible element in your markup.
 
@@ -18,20 +18,20 @@ Include visibleconsole.js in your project. It is recommended that you include yo
 
 ### To Enable ####
 
-Call the enable method of VisibleConsole to turn it on. 
+Call the enable method of VisibleConsole to turn it on.
 
 	VisibleConsole.enable();
-    
+
 *Console logs will only be captured to VisibleConsole after it is enabled.*
-    
-    
+
+
 ### To Disable ####
 
 Call the disable method of VisibleConsole to turn it off.
 
 	VisibleConsole.disable();
 
-    
+
 Both all created markup will be removed from your DOM and console operations will be returned to the browser's window.console.log.
 
 ### To Input ###
@@ -71,7 +71,7 @@ For example:
 	    <span class="visibleconsolemessage">
     	    <span class="visibleconsoleerror">
         	    [ERROR] Uncaught ReferenceError: Example Error (index.html Line: 1)
-	        </span>    
+	        </span>
     	</span>
 	</div>
 
@@ -82,6 +82,6 @@ The iFrame with an id of `#visibleconsoleiframe` is used to maintain ongoing nor
 
 ### Dependencies ###
 
-None! 
+None!
 
 This project is a proud supporter of [vanilla.js](http://vanilla-js.com/).
