@@ -121,23 +121,20 @@
 
 					for (var i = 0; i < arguments.length; ++i)
 					{
+						// Try to display as a normal string
 						if (typeof(arguments[i]) == 'string') {
 							output += arguments[i];
-							if (i < arguments.length - 1) output += ' ';
-							else output += "\n";
 						} else {
 							try {
-								strArg = arguments[i].toString();
+								strArg = JSON.stringify(arguments[i]);
 								output += strArg;
-								if (i < arguments.length - 1) output += ' ';
-								else output += "\n";
 							} catch (e) {
 								strArg = Object.prototype.toString.call(arguments[i]);
 								output += strArg;
-								if (i < arguments.length - 1) output += ' ';
-								else output += "\n";
 							}
 						}
+						if (i < arguments.length - 1) output += ' ';
+						else output += "\n";
 					}
 
 					output += "</span>";
