@@ -46,6 +46,7 @@
 				VisibleConsole.headerEl.id = 'visibleconsoleheader';
 				VisibleConsole.headerEl.innerHTML = '~VisibleConsole~';
 				VisibleConsole.headerEl.onmousedown = VisibleConsole._startMoving;
+				VisibleConsole.headerEl.ontouchstart = VisibleConsole._startTouchMoving;
 				document.getElementById('visibleconsole').appendChild(VisibleConsole.headerEl);
 			}
 
@@ -79,6 +80,7 @@
 				VisibleConsole.handleEl = document.createElement('div');
 				VisibleConsole.handleEl.id = 'visibleconsolehandle';
 				VisibleConsole.handleEl.onmousedown = VisibleConsole._startResizing;
+				VisibleConsole.handleEl.ontouchstart = VisibleConsole._startTouchResizing;
 				document.getElementById('visibleconsole').appendChild(VisibleConsole.handleEl);
 				VisibleConsole.handleEl.appendChild(VisibleConsole._createline(21, 15, 16, 20));
 				VisibleConsole.handleEl.appendChild(VisibleConsole._createline(21, 9, 10, 20));
@@ -199,6 +201,8 @@
 	VisibleConsole._stop = function () {
 		document.onmouseup = function(){};
 		document.onmousemove = function(){};
+		document.ontouchend = function(){};
+		document.ontouchmove = function(){};
 	};
 
 	VisibleConsole._move = function (xpos, ypos) {
@@ -240,7 +244,35 @@
 			VisibleConsole._move (newX, newY);
 		};
 
-		document.onmouseup = VisibleConsole._stop;
+		document.onmouseup = document.ontouchend = VisibleConsole._stop;
+	};
+
+	VisibleConsole._startTouchMoving = function (evt) {
+		evt = evt || window.event;
+		VisibleConsole._stopDefault(evt);
+
+		var touch = (typeof (evt.touches) !== 'undefined') ? evt.touches[0] : null;
+		if (touch !== null) {
+			var posX = touch.clientX;
+			var posY = touch.clientY;
+			var divTop = Number(VisibleConsole.consoleEl.style.top.replace('px',''));
+			var divLeft = Number(VisibleConsole.consoleEl.style.left.replace('px',''));
+			var diffX = posX - divLeft;
+			var diffY = posY - divTop;
+
+			document.ontouchmove = function (evt) {
+				VisibleConsole._stopDefault(evt);
+				evt = evt || window.event;
+				var touch = (typeof (evt.touches) !== 'undefined') ? evt.touches[0] : null;
+				if (touch !== null) {
+					var newX = touch.clientX - diffX;
+					var newY = touch.clientY - diffY;
+					VisibleConsole._move (newX, newY);
+				}
+			};
+
+			document.ontouchend = VisibleConsole._stop;
+		}
 	};
 
 	VisibleConsole._startResizing = function (evt) {
@@ -265,6 +297,32 @@
 		};
 		document.onmouseup = VisibleConsole._stop;
 	};
+
+	VisibleConsole._startTouchResizing = function (evt) {
+		evt = evt || window.event;
+		VisibleConsole._stopDefault(evt);
+
+		var touch = (typeof (evt.touches) !== 'undefined') ? evt.touches[0] : null;
+		if (touch !== null) {
+			var posX = touch.clientX;
+			var posY = touch.clientY;
+			var divTop = Number(VisibleConsole.consoleEl.style.top.replace('px',''));
+			var divLeft = Number(VisibleConsole.consoleEl.style.left.replace('px',''));
+
+			document.ontouchmove = function(evt) {
+				evt = evt || window.event;
+				VisibleConsole._stopDefault(evt);
+				var touch = (typeof (evt.touches) !== 'undefined') ? evt.touches[0] : null;
+				if (touch !== null) {
+					var newW = touch.clientX - divLeft;
+					var newH = touch.clientY - divTop;
+				}
+				VisibleConsole._resize(newW, newH);
+			};
+			document.ontouchend = VisibleConsole._stop;
+		}
+	};
+
 
 	VisibleConsole._stopDefault = function (e) {
 		if (e && e.preventDefault) {
