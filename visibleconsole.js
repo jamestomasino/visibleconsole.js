@@ -20,6 +20,7 @@
 	VisibleConsole.consoleInnerEl;
 	VisibleConsole.consoleContainerEl;
 	VisibleConsole.consoleOutputEl;
+	VisibleConsole.consoleInputEl;
 	VisibleConsole.handleEl;
 	VisibleConsole.fallBackIFrame;
 
@@ -72,6 +73,15 @@
 				VisibleConsole.consoleOutputEl = document.createElement('div');
 				VisibleConsole.consoleOutputEl.id = 'visibleconsoleoutput';
 				document.getElementById('visibleconsolecontainer').appendChild(VisibleConsole.consoleOutputEl);
+			}
+
+			// add the input
+			VisibleConsole.consoleInputEl = document.getElementById('visibleconsoleinput');
+			if ( !VisibleConsole.consoleInputEl )  {
+				VisibleConsole.consoleInputEl = document.createElement('input');
+				VisibleConsole.consoleInputEl.id = 'visibleconsoleinput';
+				VisibleConsole.consoleInputEl.onkeypress = VisibleConsole._keyPress;
+				document.getElementById('visibleconsolecontainer').appendChild(VisibleConsole.consoleInputEl);
 			}
 
 			// add the resize handle div
@@ -324,15 +334,30 @@
 	};
 
 
-	VisibleConsole._stopDefault = function (e) {
-		if (e && e.preventDefault) {
-			e.preventDefault();
+	VisibleConsole._stopDefault = function (evt) {
+		evt = evt || window.event;
+		if (evt && evt.preventDefault) {
+			evt.preventDefault();
 		}
 		else {
 			window.event.returnValue = false;
 		}
 		return false;
 	};
+
+	VisibleConsole._keyPress = function (evt) {
+		evt = evt || window.event;
+        var keyCode = evt ? (evt.which ? evt.which : evt.keyCode) : event.keyCode;
+        if (keyCode == 13) {
+        	var theCode = event.target.value;
+            event.target.value = "";
+            eval(theCode);
+        }
+        else
+            return true;
+    };
+
+
 	window.VisibleConsole = VisibleConsole;
 
 })(window, document);

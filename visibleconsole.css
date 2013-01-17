@@ -127,6 +127,24 @@
 	margin-bottom: 10px;
 }
 
+#visibleconsoleinput {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	margin: 0;
+	border: none;
+	background: #eee;
+	width: 100%;
+	padding: 4px;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+#visibleconsoleinput:focus {
+	outline-width: 0;
+}
+
 #visibleconsolehandle {
 	position: absolute;
 	bottom: 0;
