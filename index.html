@@ -18,9 +18,10 @@
 			</p>
 
 			<p>
-				<button type="button" name="test1" value="" class="logbutton" onclick="testlog1()">Test Log 1</button>
-				<button type="button" name="test2" value="" class="logbutton" onclick="testlog2()">Test Log 2</button>
-				<button type="button" name="error" value="" class="logbutton" onclick="testlog3()">Error Test Log</button>
+				<button type="button" name="test1" value="" class="logbutton" onclick="testlog1()">Short Test Log</button>
+				<button type="button" name="test2" value="" class="logbutton" onclick="testlog2()">Long Test Log</button>
+				<button type="button" name="test2" value="" class="logbutton" onclick="testlog3(event)">Event Test Log</button>
+				<button type="button" name="error" value="" class="logbutton" onclick="testlogerror()">Error Test Log</button>
 			</p>
 		</div>
 
@@ -46,6 +47,10 @@
 
 			function testlog2() {
 				console.log('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.');
+			}
+
+			function testlog3(e) {
+				console.log(e);
 			}
 
 			function enable()  { VisibleConsole.enable(); }
