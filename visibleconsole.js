@@ -1,8 +1,10 @@
 /*!
- * VisibleConsole v0.2
+ * VisibleConsole v0.3
  * http://github.com/jamestomasino/visibleconsole.js
  *
- * Copyright (c) James Tomasino and Eric Emmons
+ * Copyright (c) James Tomasino
+ *               Eric Emmons
+ *               Stephen McDonald
  * MIT license
  *
  */
