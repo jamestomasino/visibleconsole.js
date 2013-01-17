@@ -1,5 +1,5 @@
 /*!
- * VisibleConsole v0.3
+ * VisibleConsole v0.3.1
  * http://github.com/jamestomasino/visibleconsole.js
  *
  * Copyright (c) James Tomasino
