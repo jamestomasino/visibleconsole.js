@@ -1,8 +1,10 @@
 /*!
- * VisibleConsole v0.2
+ * VisibleConsole v0.3
  * http://github.com/jamestomasino/visibleconsole.js
  *
- * Copyright (c) James Tomasino and Eric Emmons
+ * Copyright (c) James Tomasino
+ *               Eric Emmons
+ *               Stephen McDonald
  * MIT license
  *
  */
@@ -20,6 +22,7 @@
 	VisibleConsole.consoleInnerEl;
 	VisibleConsole.consoleContainerEl;
 	VisibleConsole.consoleOutputEl;
+	VisibleConsole.consoleInputEl;
 	VisibleConsole.handleEl;
 	VisibleConsole.fallBackIFrame;
 
@@ -46,6 +49,7 @@
 				VisibleConsole.headerEl.id = 'visibleconsoleheader';
 				VisibleConsole.headerEl.innerHTML = '~VisibleConsole~';
 				VisibleConsole.headerEl.onmousedown = VisibleConsole._startMoving;
+				VisibleConsole.headerEl.ontouchstart = VisibleConsole._startTouchMoving;
 				document.getElementById('visibleconsole').appendChild(VisibleConsole.headerEl);
 			}
 
@@ -73,12 +77,22 @@
 				document.getElementById('visibleconsolecontainer').appendChild(VisibleConsole.consoleOutputEl);
 			}
 
+			// add the input
+			VisibleConsole.consoleInputEl = document.getElementById('visibleconsoleinput');
+			if ( !VisibleConsole.consoleInputEl )  {
+				VisibleConsole.consoleInputEl = document.createElement('input');
+				VisibleConsole.consoleInputEl.id = 'visibleconsoleinput';
+				VisibleConsole.consoleInputEl.onkeypress = VisibleConsole._keyPress;
+				document.getElementById('visibleconsolecontainer').appendChild(VisibleConsole.consoleInputEl);
+			}
+
 			// add the resize handle div
 			VisibleConsole.handleEl = document.getElementById('visibleconsolehandle');
 			if ( !VisibleConsole.handleEl )  {
 				VisibleConsole.handleEl = document.createElement('div');
 				VisibleConsole.handleEl.id = 'visibleconsolehandle';
 				VisibleConsole.handleEl.onmousedown = VisibleConsole._startResizing;
+				VisibleConsole.handleEl.ontouchstart = VisibleConsole._startTouchResizing;
 				document.getElementById('visibleconsole').appendChild(VisibleConsole.handleEl);
 				VisibleConsole.handleEl.appendChild(VisibleConsole._createline(21, 15, 16, 20));
 				VisibleConsole.handleEl.appendChild(VisibleConsole._createline(21, 9, 10, 20));
@@ -109,23 +123,20 @@
 
 					for (var i = 0; i < arguments.length; ++i)
 					{
+						// Try to display as a normal string
 						if (typeof(arguments[i]) == 'string') {
 							output += arguments[i];
-							if (i < arguments.length - 1) output += ' ';
-							else output += "\n";
 						} else {
 							try {
-								strArg = arguments[i].toString();
+								strArg = JSON.stringify(arguments[i]);
 								output += strArg;
-								if (i < arguments.length - 1) output += ' ';
-								else output += "\n";
 							} catch (e) {
 								strArg = Object.prototype.toString.call(arguments[i]);
 								output += strArg;
-								if (i < arguments.length - 1) output += ' ';
-								else output += "\n";
 							}
 						}
+						if (i < arguments.length - 1) output += ' ';
+						else output += "\n";
 					}
 
 					output += "</span>";
@@ -145,6 +156,8 @@
 				window.console.log('<span class="visibleconsoleerror">[ERROR] ' + msg + ' (' + url + ' Line: ' + linenumber + ')</span>');
 				return true;
 			};
+
+			VisibleConsole._resize();
 
 		}
 	};
@@ -199,6 +212,8 @@
 	VisibleConsole._stop = function () {
 		document.onmouseup = function(){};
 		document.onmousemove = function(){};
+		document.ontouchend = function(){};
+		document.ontouchmove = function(){};
 	};
 
 	VisibleConsole._move = function (xpos, ypos) {
@@ -207,14 +222,17 @@
 	};
 
 	VisibleConsole._resize = function (w, h) {
-		VisibleConsole.consoleEl.style.pixelWidth = w;
-		VisibleConsole.consoleEl.style.pixelHeight = h;
-		VisibleConsole.consoleEl.style.width = w + 'px';
-		VisibleConsole.consoleEl.style.height = h + 'px';
-		var vin = VisibleConsole.consoleInnerEl.offsetHeight;
-		var	vhe = VisibleConsole.headerEl.offsetHeight;
-		var vop = (vin-vhe);
-		VisibleConsole.consoleOutputEl.style.height = vop + 'px';
+		if(w !== null && h !== null) {
+			VisibleConsole.consoleEl.style.pixelWidth = w;
+			VisibleConsole.consoleEl.style.pixelHeight = h;
+			VisibleConsole.consoleEl.style.width = w + 'px';
+			VisibleConsole.consoleEl.style.height = h + 'px';
+		}
+		var wholeConsoleHeight = VisibleConsole.consoleInnerEl.offsetHeight;
+		var	headerHeight = VisibleConsole.headerEl.offsetHeight;
+		var inputHeight = VisibleConsole.consoleInputEl.offsetHeight;
+		var contentHeight = (wholeConsoleHeight - headerHeight - inputHeight);
+		VisibleConsole.consoleOutputEl.style.height = contentHeight + 'px';
 	};
 
 	VisibleConsole._startMoving = function (evt) {
@@ -240,7 +258,35 @@
 			VisibleConsole._move (newX, newY);
 		};
 
-		document.onmouseup = VisibleConsole._stop;
+		document.onmouseup = document.ontouchend = VisibleConsole._stop;
+	};
+
+	VisibleConsole._startTouchMoving = function (evt) {
+		evt = evt || window.event;
+		VisibleConsole._stopDefault(evt);
+
+		var touch = (typeof (evt.touches) !== 'undefined') ? evt.touches[0] : null;
+		if (touch !== null) {
+			var posX = touch.clientX;
+			var posY = touch.clientY;
+			var divTop = Number(VisibleConsole.consoleEl.style.top.replace('px',''));
+			var divLeft = Number(VisibleConsole.consoleEl.style.left.replace('px',''));
+			var diffX = posX - divLeft;
+			var diffY = posY - divTop;
+
+			document.ontouchmove = function (evt) {
+				VisibleConsole._stopDefault(evt);
+				evt = evt || window.event;
+				var touch = (typeof (evt.touches) !== 'undefined') ? evt.touches[0] : null;
+				if (touch !== null) {
+					var newX = touch.clientX - diffX;
+					var newY = touch.clientY - diffY;
+					VisibleConsole._move (newX, newY);
+				}
+			};
+
+			document.ontouchend = VisibleConsole._stop;
+		}
 	};
 
 	VisibleConsole._startResizing = function (evt) {
@@ -266,15 +312,56 @@
 		document.onmouseup = VisibleConsole._stop;
 	};
 
-	VisibleConsole._stopDefault = function (e) {
-		if (e && e.preventDefault) {
-			e.preventDefault();
+	VisibleConsole._startTouchResizing = function (evt) {
+		evt = evt || window.event;
+		VisibleConsole._stopDefault(evt);
+
+		var touch = (typeof (evt.touches) !== 'undefined') ? evt.touches[0] : null;
+		if (touch !== null) {
+			var posX = touch.clientX;
+			var posY = touch.clientY;
+			var divTop = Number(VisibleConsole.consoleEl.style.top.replace('px',''));
+			var divLeft = Number(VisibleConsole.consoleEl.style.left.replace('px',''));
+
+			document.ontouchmove = function(evt) {
+				evt = evt || window.event;
+				VisibleConsole._stopDefault(evt);
+				var touch = (typeof (evt.touches) !== 'undefined') ? evt.touches[0] : null;
+				if (touch !== null) {
+					var newW = touch.clientX - divLeft;
+					var newH = touch.clientY - divTop;
+				}
+				VisibleConsole._resize(newW, newH);
+			};
+			document.ontouchend = VisibleConsole._stop;
+		}
+	};
+
+
+	VisibleConsole._stopDefault = function (evt) {
+		evt = evt || window.event;
+		if (evt && evt.preventDefault) {
+			evt.preventDefault();
 		}
 		else {
 			window.event.returnValue = false;
 		}
 		return false;
 	};
+
+	VisibleConsole._keyPress = function (evt) {
+		evt = evt || window.event;
+        var keyCode = evt ? (evt.which ? evt.which : evt.keyCode) : event.keyCode;
+        if (keyCode == 13) {
+        	var theCode = event.target.value;
+            event.target.value = "";
+            eval(theCode);
+        }
+        else
+            return true;
+    };
+
+
 	window.VisibleConsole = VisibleConsole;
 
 })(window, document);
