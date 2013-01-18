@@ -15,8 +15,8 @@
 	function VisibleConsole () {}
 
 	// Static properties
-	VisibleConsole.browserVisibleConsole;
-	VisibleConsole.browserLog;
+	VisibleConsole.browserFallbackConsole;
+	VisibleConsole.browserFallbackLog;
 	VisibleConsole.outputContent;
 
 	// DOM Elements & Struct
@@ -27,7 +27,6 @@
 				VisibleConsole.consoleOutputEl;
 				VisibleConsole.consoleInputEl;
 		VisibleConsole.handleEl;
-	VisibleConsole.fallBackIFrame;
 
 
 	// Static psudo-privates
@@ -104,22 +103,8 @@
 				VisibleConsole.handleEl.appendChild(VisibleConsole._createline(handleWidth + 1, handleHeight - 11, handleWidth - 10, handleHeight));
 			}
 
-			// Prepare fallback console
-			VisibleConsole.fallBackIFrame = document.getElementById('visibleconsoleiframe');
-			if ( !VisibleConsole.fallBackIFrame ) {
-				VisibleConsole.fallBackIFrame = document.createElement('iframe');
-				VisibleConsole.fallBackIFrame.style.display = 'none';
-				VisibleConsole.fallBackIFrame.id = 'visibleconsoleiframe';
-				document.body.appendChild(VisibleConsole.fallBackIFrame);
-			}
-
-			// Prepare browserVisibleConsole
-			VisibleConsole.browserVisibleConsole = VisibleConsole.fallBackIFrame.contentWindow.console;
-
-			// Fix native code interpolation error on apply: http://stackoverflow.com/questions/5538972/console-log-apply-not-working-in-ie9
-			if (Function.prototype.bind && VisibleConsole.browserVisibleConsole && typeof VisibleConsole.browserVisibleConsole.log == "object") {
-				VisibleConsole.browserLog = Function.prototype.bind.call(VisibleConsole.browserVisibleConsole.log, VisibleConsole.browserVisibleConsole);
-			}
+			// Store for disable
+			VisibleConsole.browserFallbackConsole = window.console;
 
 			// Ouput to #visibleconsole
 			window.console = {
@@ -130,10 +115,7 @@
 					VisibleConsole.consoleOutputEl.appendChild(outputWrapper);
 					VisibleConsole.consoleOutputEl.scrollTop = VisibleConsole.consoleOutputEl.scrollHeight;
 
-					// Output to native console
-					if (VisibleConsole.browserLog && VisibleConsole.browserVisibleConsole && VisibleConsole.browserVisibleConsole.log ) {
-						VisibleConsole.browserLog.apply ( null, arguments);
-					}
+					VisibleConsole.browserFallbackConsole.log.apply ( VisibleConsole.browserFallbackConsole, arguments );
 				}
 			};
 
@@ -141,7 +123,7 @@
 				var outputWrapper = VisibleConsole._createErrorMessage ( msg, url, linenumber );
 				VisibleConsole.consoleOutputEl.appendChild(outputWrapper);
 				VisibleConsole.consoleOutputEl.scrollTop = VisibleConsole.consoleOutputEl.scrollHeight;
-				return true;
+				return false;
 			};
 
 			VisibleConsole._resize();
@@ -153,14 +135,10 @@
 		if (VisibleConsole._isEnabled === true) {
 			VisibleConsole._isEnabled = false;
 
-			window.console = VisibleConsole.browserVisibleConsole;
-			window.onerror = VisibleConsole.fallBackIFrame.contentWindow.onerror;
+			window.console = VisibleConsole.browserFallbackConsole;
 
 			VisibleConsole.consoleEl.parentNode.removeChild(VisibleConsole.consoleEl);
-			VisibleConsole.fallBackIFrame.parentNode.removeChild(VisibleConsole.fallBackIFrame);
 			VisibleConsole.consoleEl = null;
-			VisibleConsole.fallBackIFrame = null;
-			VisibleConsole.browserLog = null;
 		}
 	};
 
