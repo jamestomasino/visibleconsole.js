@@ -17,7 +17,7 @@
 	// Static properties
 	VisibleConsole.browserFallbackConsole;
 	VisibleConsole.browserFallbackLog;
-	VisibleConsole.outputContent;
+	VisibleConsole.consolePassiveOutput;
 
 	// DOM Elements & Struct
 	VisibleConsole.consoleEl;
@@ -31,6 +31,8 @@
 
 	// Static psudo-privates
 	VisibleConsole._isEnabled = false;
+	VisibleConsole._isPassiveLogging = false;
+
 
 	VisibleConsole.enable = function () {
 
@@ -104,7 +106,13 @@
 			}
 
 			// Store for disable
-			VisibleConsole.browserFallbackConsole = window.console;
+			if (!VisibleConsole.browserFallbackConsole) VisibleConsole.browserFallbackConsole = window.console;
+
+			// Get passive logging content if it exists
+			if (VisibleConsole.consolePassiveOutput) {
+				VisibleConsole.consoleOutputEl.innerHTML = VisibleConsole.consolePassiveOutput.innerHTML;
+				VisibleConsole.consoleOutputEl.scrollTop = VisibleConsole.consoleOutputEl.scrollHeight;
+			}
 
 			// Ouput to #visibleconsole
 			window.console = {
@@ -135,11 +143,59 @@
 		if (VisibleConsole._isEnabled === true) {
 			VisibleConsole._isEnabled = false;
 
-			window.console = VisibleConsole.browserFallbackConsole;
+			if ( VisibleConsole._isPassiveLogging === true) {
+				VisibleConsole._enablePassiveLogger();
+				if (VisibleConsole.consoleOutputEl) VisibleConsole.consolePassiveOutput.innerHTML = VisibleConsole.consoleOutputEl.innerHTML
+			} else {
+				window.console = VisibleConsole.browserFallbackConsole;
+				VisibleConsole.browserFallbackConsole = null;
+			}
 
 			VisibleConsole.consoleEl.parentNode.removeChild(VisibleConsole.consoleEl);
 			VisibleConsole.consoleEl = null;
 		}
+	};
+
+	VisibleConsole.enablePassiveLogging = function () {
+		if (VisibleConsole._isPassiveLogging === false) {
+			VisibleConsole._isPassiveLogging = true;
+
+			if (!VisibleConsole.browserFallbackConsole) VisibleConsole.browserFallbackConsole = window.console;
+
+			if (VisibleConsole._isEnabled !== true) {
+				VisibleConsole._enablePassiveLogger();
+			}
+		}
+	};
+
+	VisibleConsole.disablePassiveLogging = function () {
+		if (VisibleConsole._isPassiveLogging === true) {
+			VisibleConsole._isPassiveLogging = false;
+
+			if (VisibleConsole._isEnabled !== true) {
+				window.console = VisibleConsole.browserFallbackConsole;
+				VisibleConsole.browserFallbackConsole = null;
+			}
+		}
+	};
+
+	VisibleConsole._enablePassiveLogger = function () {
+
+		VisibleConsole.consolePassiveOutput = document.createElement('div');
+
+		window.console = {
+			log: function () {
+				var outputWrapper = VisibleConsole._createLogMessage( arguments );
+				VisibleConsole.consolePassiveOutput.appendChild(outputWrapper);
+				if ( VisibleConsole.browserFallbackConsole.log ) VisibleConsole.browserFallbackConsole.log.apply ( VisibleConsole.browserFallbackConsole, arguments );
+			}
+		};
+
+		window.onerror = function (msg, url, linenumber) {
+			var outputWrapper = VisibleConsole._createErrorMessage ( msg, url, linenumber );
+			VisibleConsole.consolePassiveOutput.appendChild(outputWrapper);
+			return false;
+		};
 	};
 
 	VisibleConsole._createLogMessage = function ( args ) {
