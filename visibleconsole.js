@@ -19,14 +19,16 @@
 	VisibleConsole.browserFallbackLog;
 	VisibleConsole.consolePassiveOutput;
 
+	VisibleConsole.el = {};
+
 	// DOM Elements & Struct
-	VisibleConsole.consoleEl;
-		VisibleConsole.headerEl;
-		VisibleConsole.consoleInnerEl;
-			VisibleConsole.consoleContainerEl;
-				VisibleConsole.consoleOutputEl;
-				VisibleConsole.consoleInputEl;
-		VisibleConsole.handleEl;
+	VisibleConsole.el.console;
+		VisibleConsole.el.header;
+		VisibleConsole.el.inner;
+			VisibleConsole.el.container;
+				VisibleConsole.el.output;
+				VisibleConsole.el.input;
+		VisibleConsole.el.handle;
 
 
 	// Static psudo-privates
@@ -40,69 +42,69 @@
 			VisibleConsole._isEnabled = true;
 
 			// Prepare #console element
-			VisibleConsole.consoleEl = document.getElementById('visibleconsole');
-			if ( !VisibleConsole.consoleEl )  {
-				VisibleConsole.consoleEl = document.createElement('div');
-				VisibleConsole.consoleEl.id = 'visibleconsole';
-				document.body.appendChild(VisibleConsole.consoleEl);
+			VisibleConsole.el.console = document.getElementById('visibleconsole');
+			if ( !VisibleConsole.el.console )  {
+				VisibleConsole.el.console = document.createElement('div');
+				VisibleConsole.el.console.id = 'visibleconsole';
+				document.body.appendChild(VisibleConsole.el.console);
 			}
 
 			// add the draggable header div
-			VisibleConsole.headerEl = document.getElementById('visibleconsoleheader');
-			if ( !VisibleConsole.headerEl ) {
-				VisibleConsole.headerEl = document.createElement('div');
-				VisibleConsole.headerEl.id = 'visibleconsoleheader';
-				VisibleConsole.headerEl.innerHTML = '~VisibleConsole~';
-				VisibleConsole.headerEl.onmousedown = VisibleConsole._startMoving;
-				VisibleConsole.headerEl.ontouchstart = VisibleConsole._startTouchMoving;
-				document.getElementById('visibleconsole').appendChild(VisibleConsole.headerEl);
+			VisibleConsole.el.header = document.getElementById('visibleconsoleheader');
+			if ( !VisibleConsole.el.header ) {
+				VisibleConsole.el.header = document.createElement('div');
+				VisibleConsole.el.header.id = 'visibleconsoleheader';
+				VisibleConsole.el.header.innerHTML = '~VisibleConsole~';
+				VisibleConsole.el.header.onmousedown = VisibleConsole._startMoving;
+				VisibleConsole.el.header.ontouchstart = VisibleConsole._startTouchMoving;
+				document.getElementById('visibleconsole').appendChild(VisibleConsole.el.header);
 			}
 
 			// add the console inner div
-			VisibleConsole.consoleInnerEl = document.getElementById('visibleconsoleinner');
-			if ( !VisibleConsole.consoleInnerEl )  {
-				VisibleConsole.consoleInnerEl = document.createElement('div');
-				VisibleConsole.consoleInnerEl.id = 'visibleconsoleinner';
-				document.getElementById('visibleconsole').appendChild(VisibleConsole.consoleInnerEl);
+			VisibleConsole.el.inner = document.getElementById('visibleconsoleinner');
+			if ( !VisibleConsole.el.inner )  {
+				VisibleConsole.el.inner = document.createElement('div');
+				VisibleConsole.el.inner.id = 'visibleconsoleinner';
+				document.getElementById('visibleconsole').appendChild(VisibleConsole.el.inner);
 			}
 
 			// add the visible output container div
-			VisibleConsole.consoleContainerEl = document.getElementById('visibleconsolecontainer');
-			if ( !VisibleConsole.consoleContainerEl )  {
-				VisibleConsole.consoleContainerEl = document.createElement('div');
-				VisibleConsole.consoleContainerEl.id = 'visibleconsolecontainer';
-				document.getElementById('visibleconsoleinner').appendChild(VisibleConsole.consoleContainerEl);
+			VisibleConsole.el.container = document.getElementById('visibleconsolecontainer');
+			if ( !VisibleConsole.el.container )  {
+				VisibleConsole.el.container = document.createElement('div');
+				VisibleConsole.el.container.id = 'visibleconsolecontainer';
+				document.getElementById('visibleconsoleinner').appendChild(VisibleConsole.el.container);
 			}
 
 			// add the visible output div
-			VisibleConsole.consoleOutputEl = document.getElementById('visibleconsoleoutput');
-			if ( !VisibleConsole.consoleOutputEl )  {
-				VisibleConsole.consoleOutputEl = document.createElement('div');
-				VisibleConsole.consoleOutputEl.id = 'visibleconsoleoutput';
-				document.getElementById('visibleconsolecontainer').appendChild(VisibleConsole.consoleOutputEl);
+			VisibleConsole.el.output = document.getElementById('visibleconsoleoutput');
+			if ( !VisibleConsole.el.output )  {
+				VisibleConsole.el.output = document.createElement('div');
+				VisibleConsole.el.output.id = 'visibleconsoleoutput';
+				document.getElementById('visibleconsolecontainer').appendChild(VisibleConsole.el.output);
 			}
 
 			// add the input
-			VisibleConsole.consoleInputEl = document.getElementById('visibleconsoleinput');
-			if ( !VisibleConsole.consoleInputEl )  {
-				VisibleConsole.consoleInputEl = document.createElement('input');
-				VisibleConsole.consoleInputEl.id = 'visibleconsoleinput';
-				VisibleConsole.consoleInputEl.onkeypress = VisibleConsole._keyPress;
-				document.getElementById('visibleconsolecontainer').appendChild(VisibleConsole.consoleInputEl);
+			VisibleConsole.el.input = document.getElementById('visibleconsoleinput');
+			if ( !VisibleConsole.el.input )  {
+				VisibleConsole.el.input = document.createElement('input');
+				VisibleConsole.el.input.id = 'visibleconsoleinput';
+				VisibleConsole.el.input.onkeypress = VisibleConsole._keyPress;
+				document.getElementById('visibleconsolecontainer').appendChild(VisibleConsole.el.input);
 			}
 
 			// add the resize handle div
-			VisibleConsole.handleEl = document.getElementById('visibleconsolehandle');
-			if ( !VisibleConsole.handleEl )  {
-				VisibleConsole.handleEl = document.createElement('div');
-				VisibleConsole.handleEl.id = 'visibleconsolehandle';
-				VisibleConsole.handleEl.onmousedown = VisibleConsole._startResizing;
-				VisibleConsole.handleEl.ontouchstart = VisibleConsole._startTouchResizing;
-				document.getElementById('visibleconsole').appendChild(VisibleConsole.handleEl);
-				var handleWidth = VisibleConsole.handleEl.offsetWidth;
-				var handleHeight = VisibleConsole.handleEl.offsetHeight;
-				VisibleConsole.handleEl.appendChild(VisibleConsole._createline(handleWidth + 1, handleHeight - 5, handleWidth - 4, handleHeight));
-				VisibleConsole.handleEl.appendChild(VisibleConsole._createline(handleWidth + 1, handleHeight - 11, handleWidth - 10, handleHeight));
+			VisibleConsole.el.handle = document.getElementById('visibleconsolehandle');
+			if ( !VisibleConsole.el.handle )  {
+				VisibleConsole.el.handle = document.createElement('div');
+				VisibleConsole.el.handle.id = 'visibleconsolehandle';
+				VisibleConsole.el.handle.onmousedown = VisibleConsole._startResizing;
+				VisibleConsole.el.handle.ontouchstart = VisibleConsole._startTouchResizing;
+				document.getElementById('visibleconsole').appendChild(VisibleConsole.el.handle);
+				var handleWidth = VisibleConsole.el.handle.offsetWidth;
+				var handleHeight = VisibleConsole.el.handle.offsetHeight;
+				VisibleConsole.el.handle.appendChild(VisibleConsole._createline(handleWidth + 1, handleHeight - 5, handleWidth - 4, handleHeight));
+				VisibleConsole.el.handle.appendChild(VisibleConsole._createline(handleWidth + 1, handleHeight - 11, handleWidth - 10, handleHeight));
 			}
 
 			// Store for disable
@@ -110,8 +112,8 @@
 
 			// Get passive logging content if it exists
 			if (VisibleConsole.consolePassiveOutput) {
-				VisibleConsole.consoleOutputEl.innerHTML = VisibleConsole.consolePassiveOutput.innerHTML;
-				VisibleConsole.consoleOutputEl.scrollTop = VisibleConsole.consoleOutputEl.scrollHeight;
+				VisibleConsole.el.output.innerHTML = VisibleConsole.consolePassiveOutput.innerHTML;
+				VisibleConsole.el.output.scrollTop = VisibleConsole.el.output.scrollHeight;
 			}
 
 			// Ouput to #visibleconsole
@@ -120,8 +122,8 @@
 
 					var outputWrapper = VisibleConsole._createLogMessage( arguments );
 
-					VisibleConsole.consoleOutputEl.appendChild(outputWrapper);
-					VisibleConsole.consoleOutputEl.scrollTop = VisibleConsole.consoleOutputEl.scrollHeight;
+					VisibleConsole.el.output.appendChild(outputWrapper);
+					VisibleConsole.el.output.scrollTop = VisibleConsole.el.output.scrollHeight;
 
 					if ( VisibleConsole.browserFallbackConsole.log ) VisibleConsole.browserFallbackConsole.log.apply ( VisibleConsole.browserFallbackConsole, arguments );
 				}
@@ -129,8 +131,8 @@
 
 			window.onerror = function (msg, url, linenumber) {
 				var outputWrapper = VisibleConsole._createErrorMessage ( msg, url, linenumber );
-				VisibleConsole.consoleOutputEl.appendChild(outputWrapper);
-				VisibleConsole.consoleOutputEl.scrollTop = VisibleConsole.consoleOutputEl.scrollHeight;
+				VisibleConsole.el.output.appendChild(outputWrapper);
+				VisibleConsole.el.output.scrollTop = VisibleConsole.el.output.scrollHeight;
 				return false;
 			};
 
@@ -145,14 +147,14 @@
 
 			if ( VisibleConsole._isPassiveLogging === true) {
 				VisibleConsole._enablePassiveLogger();
-				if (VisibleConsole.consoleOutputEl) VisibleConsole.consolePassiveOutput.innerHTML = VisibleConsole.consoleOutputEl.innerHTML
+				if (VisibleConsole.el.output) VisibleConsole.consolePassiveOutput.innerHTML = VisibleConsole.el.output.innerHTML
 			} else {
 				window.console = VisibleConsole.browserFallbackConsole;
 				VisibleConsole.browserFallbackConsole = null;
 			}
 
-			VisibleConsole.consoleEl.parentNode.removeChild(VisibleConsole.consoleEl);
-			VisibleConsole.consoleEl = null;
+			VisibleConsole.el.console.parentNode.removeChild(VisibleConsole.el.console);
+			VisibleConsole.el.console = null;
 		}
 	};
 
@@ -281,28 +283,28 @@
 			var elem = (document.compatMode === "CSS1Compat") ?  document.documentElement : document.body;
 			var height = elem.clientHeight;
 			var width = elem.clientWidth;
-			var wholeConsoleHeight = VisibleConsole.consoleInnerEl.offsetHeight;
-			var wholeConsoleWidth = VisibleConsole.consoleInnerEl.offsetWidth;
+			var wholeConsoleHeight = VisibleConsole.el.inner.offsetHeight;
+			var wholeConsoleWidth = VisibleConsole.el.inner.offsetWidth;
 			xpos = (width >> 1) - (wholeConsoleWidth >> 1);
 			ypos = (height >> 1) - (wholeConsoleHeight >> 1);
 		}
 
-		VisibleConsole.consoleEl.style.left = Math.max(xpos,0) + 'px';
-		VisibleConsole.consoleEl.style.top = Math.max(ypos,0) + 'px';
+		VisibleConsole.el.console.style.left = Math.max(xpos,0) + 'px';
+		VisibleConsole.el.console.style.top = Math.max(ypos,0) + 'px';
 	};
 
 	VisibleConsole._resize = function (w, h) {
 		if (typeof w !== "undefined" && typeof h !== "undefined") {
-			VisibleConsole.consoleEl.style.pixelWidth = w;
-			VisibleConsole.consoleEl.style.pixelHeight = h;
-			VisibleConsole.consoleEl.style.width = w + 'px';
-			VisibleConsole.consoleEl.style.height = h + 'px';
+			VisibleConsole.el.console.style.pixelWidth = w;
+			VisibleConsole.el.console.style.pixelHeight = h;
+			VisibleConsole.el.console.style.width = w + 'px';
+			VisibleConsole.el.console.style.height = h + 'px';
 		}
-		var wholeConsoleHeight = VisibleConsole.consoleInnerEl.offsetHeight;
-		var	headerHeight = VisibleConsole.headerEl.offsetHeight;
-		var inputHeight = VisibleConsole.consoleInputEl.offsetHeight;
+		var wholeConsoleHeight = VisibleConsole.el.inner.offsetHeight;
+		var headerHeight = VisibleConsole.el.header.offsetHeight;
+		var inputHeight = VisibleConsole.el.input.offsetHeight;
 		var contentHeight = (wholeConsoleHeight - headerHeight - inputHeight);
-		VisibleConsole.consoleOutputEl.style.height = contentHeight + 'px';
+		VisibleConsole.el.output.style.height = contentHeight + 'px';
 	};
 
 	VisibleConsole._startMoving = function (evt) {
@@ -315,8 +317,8 @@
 
 		var posX = evt.clientX;
 		var posY = evt.clientY;
-		var divTop = Number(VisibleConsole.consoleEl.style.top.replace('px',''));
-		var divLeft = Number(VisibleConsole.consoleEl.style.left.replace('px',''));
+		var divTop = Number(VisibleConsole.el.console.style.top.replace('px',''));
+		var divLeft = Number(VisibleConsole.el.console.style.left.replace('px',''));
 		var diffX = posX - divLeft;
 		var diffY = posY - divTop;
 
@@ -339,8 +341,8 @@
 		if (touch !== null) {
 			var posX = touch.clientX;
 			var posY = touch.clientY;
-			var divTop = Number(VisibleConsole.consoleEl.style.top.replace('px',''));
-			var divLeft = Number(VisibleConsole.consoleEl.style.left.replace('px',''));
+			var divTop = Number(VisibleConsole.el.console.style.top.replace('px',''));
+			var divLeft = Number(VisibleConsole.el.console.style.left.replace('px',''));
 			var diffX = posX - divLeft;
 			var diffY = posY - divTop;
 
@@ -369,8 +371,8 @@
 
 		var posX = evt.clientX;
 		var posY = evt.clientY;
-		var divTop = Number(VisibleConsole.consoleEl.style.top.replace('px',''));
-		var divLeft = Number(VisibleConsole.consoleEl.style.left.replace('px',''));
+		var divTop = Number(VisibleConsole.el.console.style.top.replace('px',''));
+		var divLeft = Number(VisibleConsole.el.console.style.left.replace('px',''));
 
 		document.onmousemove = function(evt) {
 			evt = evt || window.event;
@@ -390,8 +392,8 @@
 		if (touch !== null) {
 			var posX = touch.clientX;
 			var posY = touch.clientY;
-			var divTop = Number(VisibleConsole.consoleEl.style.top.replace('px',''));
-			var divLeft = Number(VisibleConsole.consoleEl.style.left.replace('px',''));
+			var divTop = Number(VisibleConsole.el.console.style.top.replace('px',''));
+			var divLeft = Number(VisibleConsole.el.console.style.left.replace('px',''));
 
 			document.ontouchmove = function(evt) {
 				evt = evt || window.event;
