@@ -94,8 +94,10 @@
 				VisibleConsole.handleEl.onmousedown = VisibleConsole._startResizing;
 				VisibleConsole.handleEl.ontouchstart = VisibleConsole._startTouchResizing;
 				document.getElementById('visibleconsole').appendChild(VisibleConsole.handleEl);
-				VisibleConsole.handleEl.appendChild(VisibleConsole._createline(21, 15, 16, 20));
-				VisibleConsole.handleEl.appendChild(VisibleConsole._createline(21, 9, 10, 20));
+				var handleWidth = VisibleConsole.handleEl.offsetWidth;
+				var handleHeight = VisibleConsole.handleEl.offsetHeight;
+				VisibleConsole.handleEl.appendChild(VisibleConsole._createline(handleWidth + 1, handleHeight - 5, handleWidth - 4, handleHeight));
+				VisibleConsole.handleEl.appendChild(VisibleConsole._createline(handleWidth + 1, handleHeight - 11, handleWidth - 10, handleHeight));
 			}
 
 			// Prepare fallback console
