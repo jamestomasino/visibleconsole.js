@@ -115,7 +115,7 @@
 					VisibleConsole.consoleOutputEl.appendChild(outputWrapper);
 					VisibleConsole.consoleOutputEl.scrollTop = VisibleConsole.consoleOutputEl.scrollHeight;
 
-					VisibleConsole.browserFallbackConsole.log.apply ( VisibleConsole.browserFallbackConsole, arguments );
+					if ( VisibleConsole.browserFallbackConsole.log ) VisibleConsole.browserFallbackConsole.log.apply ( VisibleConsole.browserFallbackConsole, arguments );
 				}
 			};
 

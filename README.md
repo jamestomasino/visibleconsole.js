@@ -57,7 +57,6 @@ When VisibleConsole is enabled, the following elements are added to the end of y
 		</div>
 		<div id="visibleconsolehandle"></div>
 	</div>
-	<iframe style="display: none;" id="visibleconsoleiframe"></iframe>
 
 
 Messages logged to the console will have the class `visibleconsolemessage`.
@@ -75,7 +74,6 @@ For example:
     	</span>
 	</div>
 
-The iFrame with an id of `#visibleconsoleiframe` is used to maintain ongoing normal console operations, and is leveraged until you disable visibleconsole.js.
 
 *If an element already exists in your DOM with the same ID as one in this structure, VisibleConsole will leverage your existing element. In this way, by manually creating your own structure, you can completely change the way the VisibleConsole is displayed.*
 
@@ -85,6 +83,7 @@ The iFrame with an id of `#visibleconsoleiframe` is used to maintain ongoing nor
 
 * Optimized logging code via document.createElement and appendChild instead of innerHTML
 * Center on screen on startup
+* Removed iFrame hack for restoring console. Console logs and errors pass through to browser properly now.
 
 
 ##### v0.3 #####
