@@ -16,7 +16,7 @@ Include visibleconsole.js in your project. It is recommended that you include yo
 
 	<script src="visibleconsole.js"></script>
 
-### To Enable ####
+### Enable VisibleConsole ####
 
 Call the enable method of VisibleConsole to turn it on.
 
@@ -25,7 +25,7 @@ Call the enable method of VisibleConsole to turn it on.
 *Console logs will only be captured to VisibleConsole after it is enabled.*
 
 
-### To Disable ####
+### Disable VisibleConsole ####
 
 Call the disable method of VisibleConsole to turn it off.
 
@@ -34,11 +34,25 @@ Call the disable method of VisibleConsole to turn it off.
 
 Both all created markup will be removed from your DOM and console operations will be returned to the browser's window.console.log.
 
-### To Input ###
+### Capture Logs While Disabled (Passively) ###
+
+Call the enablePassiveLogging method of VisibleConsole to turn on this feature.
+
+	VisibleConsole.enablePassiveLogging();
+	
+Logs will be captured and maintained even while the VisibleConsole is not visible. When the VisibleConsole is later enabled, you will see all of these logs.
+
+### Stop Capturing Logs Passively ###
+
+Call the disablePassiveLogging method.
+
+	VisibleConsole.disablePassiveLogging();
+
+### Input and Execute Code Interactively ###
 
 Tapping or clicking on the input bar at the bottom of the console will allow you to enter JavaScript commands and eval them, just like in a normal console. Type your command and press `Enter` to execute the line.
 
-### To Style ####
+### Style ####
 
 VisibleConsole [creates a number of elements in your DOM](#Structure) that can be styled with CSS. The included [stylesheet](https://github.com/jamestomasino/visibleconsole.js/blob/master/style.css) shows a full-featured starting point for your customization.
 
@@ -84,6 +98,7 @@ For example:
 * Optimized logging code via document.createElement and appendChild instead of innerHTML
 * Center on screen on startup
 * Removed iFrame hack for restoring console. Console logs and errors pass through to browser properly now.
+* Passive logging enabled (track logs while VisibleConsole is not enabled)
 
 
 ##### v0.3 #####
