@@ -172,6 +172,8 @@
 		if (VisibleConsole._isPassiveLogging === true) {
 			VisibleConsole._isPassiveLogging = false;
 
+			VisibleConsole.consolePassiveOutput = null;
+
 			if (VisibleConsole._isEnabled !== true) {
 				window.console = VisibleConsole.browserFallbackConsole;
 				VisibleConsole.browserFallbackConsole = null;
