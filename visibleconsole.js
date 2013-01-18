@@ -9,7 +9,7 @@
  *
  */
 
-(function(window, document){
+(function(window, document, navigator){
 	"use strict";
 
 	function VisibleConsole () {}
@@ -17,15 +17,18 @@
 	// Static properties
 	VisibleConsole.browserVisibleConsole;
 	VisibleConsole.browserLog;
-	VisibleConsole.consoleEl;
-	VisibleConsole.headerEl;
-	VisibleConsole.consoleInnerEl;
-	VisibleConsole.consoleContainerEl;
-	VisibleConsole.consoleOutputEl;
-	VisibleConsole.consoleInputEl;
-	VisibleConsole.handleEl;
-	VisibleConsole.fallBackIFrame;
 	VisibleConsole.outputContent;
+
+	// DOM Elements & Struct
+	VisibleConsole.consoleEl;
+		VisibleConsole.headerEl;
+		VisibleConsole.consoleInnerEl;
+			VisibleConsole.consoleContainerEl;
+				VisibleConsole.consoleOutputEl;
+				VisibleConsole.consoleInputEl;
+		VisibleConsole.handleEl;
+	VisibleConsole.fallBackIFrame;
+
 
 	// Static psudo-privates
 	VisibleConsole._isEnabled = false;
@@ -122,28 +125,7 @@
 			window.console = {
 				log: function () {
 
-
-					var outputWrapper = document.createElement('span');
-					var textNode;
-					outputWrapper.className = 'visibleconsolemessage';
-
-					for (var i = 0; i < arguments.length; ++i)
-					{
-						// Try to display as a normal string
-						if (typeof(arguments[i]) == 'string') {
-							textNode = document.createTextNode(arguments[i]);
-							outputWrapper.appendChild(textNode);
-						} else {
-							try {
-								textNode = document.createTextNode(JSON.stringify(arguments[i]));
-								outputWrapper.appendChild(textNode);
-							} catch (e) {
-								textNode = document.createTextNode(Object.prototype.toString.call(arguments[i]));
-								outputWrapper.appendChild(textNode);
-							}
-						}
-						if (i < arguments.length - 1) outputWrapper.appendChild(document.createTextNode(' '));
-					}
+					var outputWrapper = VisibleConsole._createLogMessage( arguments );
 
 					VisibleConsole.consoleOutputEl.appendChild(outputWrapper);
 					VisibleConsole.consoleOutputEl.scrollTop = VisibleConsole.consoleOutputEl.scrollHeight;
@@ -152,12 +134,13 @@
 					if (VisibleConsole.browserLog && VisibleConsole.browserVisibleConsole && VisibleConsole.browserVisibleConsole.log ) {
 						VisibleConsole.browserLog.apply ( null, arguments);
 					}
-
 				}
 			};
 
 			window.onerror = function (msg, url, linenumber) {
-				window.console.log('<span class="visibleconsoleerror">[ERROR] ' + msg + ' (' + url + ' Line: ' + linenumber + ')</span>');
+				var outputWrapper = VisibleConsole._createErrorMessage ( msg, url, linenumber );
+				VisibleConsole.consoleOutputEl.appendChild(outputWrapper);
+				VisibleConsole.consoleOutputEl.scrollTop = VisibleConsole.consoleOutputEl.scrollHeight;
 				return true;
 			};
 
@@ -181,17 +164,54 @@
 		}
 	};
 
+	VisibleConsole._createLogMessage = function ( args ) {
+		var outputWrapper = document.createElement('span');
+		var textNode;
+		outputWrapper.className = 'visibleconsolemessage';
+
+		for (var i = 0; i < args.length; ++i)
+		{
+			// Try to display as a normal string
+			if (typeof(args[i]) == 'string') {
+				textNode = document.createTextNode(args[i]);
+				outputWrapper.appendChild(textNode);
+			} else {
+				try {
+					textNode = document.createTextNode(JSON.stringify(args[i]));
+					outputWrapper.appendChild(textNode);
+				} catch (e) {
+					textNode = document.createTextNode(Object.prototype.toString.call(args[i]));
+					outputWrapper.appendChild(textNode);
+				}
+			}
+			if (i < args.length - 1) outputWrapper.appendChild(document.createTextNode(' '));
+		}
+		return outputWrapper;
+	};
+
+	VisibleConsole._createErrorMessage = function ( msg, url, linenumber ) {
+
+	var outputWrapper = document.createElement('span');
+		outputWrapper.className = 'visibleconsolemessage';
+
+		var errorWrapper = document.createElement('span');
+		errorWrapper.className = 'visibleconsoleerror';
+
+		var textNode = document.createTextNode('[ERROR] ' + msg + ' (' + url + ' Line: ' + linenumber + ')');
+
+		errorWrapper.appendChild(textNode);
+		outputWrapper.appendChild(errorWrapper);
+
+		return outputWrapper;
+	};
+
 	VisibleConsole._createline = function (x1, y1, x2, y2)	{
 
 		var isIE = navigator.userAgent.indexOf("MSIE") > -1;
 
 		if (x2 < x1) {
-			var temp = x1;
-			x1 = x2;
-			x2 = temp;
-			temp = y1;
-			y1 = y2;
-			y2 = temp;
+			var temp = x1; x1 = x2; x2 = temp;
+			temp = y1; y1 = y2; y2 = temp;
 		}
 		var line = document.createElement("div");
 		line.className = "visibleconsoleline";
@@ -378,5 +398,5 @@
 
 	window.VisibleConsole = VisibleConsole;
 
-})(window, document);
+})(window, document, navigator);
 
