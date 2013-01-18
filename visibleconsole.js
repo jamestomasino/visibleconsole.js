@@ -25,6 +25,7 @@
 	VisibleConsole.consoleInputEl;
 	VisibleConsole.handleEl;
 	VisibleConsole.fallBackIFrame;
+	VisibleConsole.outputContent;
 
 	// Static psudo-privates
 	VisibleConsole._isEnabled = false;
@@ -121,29 +122,30 @@
 			window.console = {
 				log: function () {
 
-					var output = "<span class='visibleconsolemessage'>", strArg;
+
+					var outputWrapper = document.createElement('span');
+					var textNode;
+					outputWrapper.className = 'visibleconsolemessage';
 
 					for (var i = 0; i < arguments.length; ++i)
 					{
 						// Try to display as a normal string
 						if (typeof(arguments[i]) == 'string') {
-							output += arguments[i];
+							textNode = document.createTextNode(arguments[i]);
+							outputWrapper.appendChild(textNode);
 						} else {
 							try {
-								strArg = JSON.stringify(arguments[i]);
-								output += strArg;
+								textNode = document.createTextNode(JSON.stringify(arguments[i]));
+								outputWrapper.appendChild(textNode);
 							} catch (e) {
-								strArg = Object.prototype.toString.call(arguments[i]);
-								output += strArg;
+								textNode = document.createTextNode(Object.prototype.toString.call(arguments[i]));
+								outputWrapper.appendChild(textNode);
 							}
 						}
-						if (i < arguments.length - 1) output += ' ';
-						else output += "\n";
+						if (i < arguments.length - 1) outputWrapper.appendChild(document.createTextNode(' '));
 					}
 
-					output += "</span>";
-
-					VisibleConsole.consoleOutputEl.innerHTML += output;
+					VisibleConsole.consoleOutputEl.appendChild(outputWrapper);
 					VisibleConsole.consoleOutputEl.scrollTop = VisibleConsole.consoleOutputEl.scrollHeight;
 
 					// Output to native console
