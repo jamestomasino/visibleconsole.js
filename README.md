@@ -79,6 +79,26 @@ The iFrame with an id of `#visibleconsoleiframe` is used to maintain ongoing nor
 
 *If an element already exists in your DOM with the same ID as one in this structure, VisibleConsole will leverage your existing element. In this way, by manually creating your own structure, you can completely change the way the VisibleConsole is displayed.*
 
+### History ###
+
+##### v0.4 #####
+
+* Optimized logging code via document.createElement and appendChild instead of innerHTML
+* Center on screen on startup
+
+
+##### v0.3 #####
+
+* Touch events for drag & resize
+* Input bar added
+
+##### v0.2 #####
+
+* Created Demo page
+* Cross-browser functionality and styles
+
+ 
+
 
 ### Dependencies ###
 
