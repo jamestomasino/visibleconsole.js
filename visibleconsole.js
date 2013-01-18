@@ -9,26 +9,30 @@
  *
  */
 
-(function(window, document){
+(function(window, document, navigator){
 	"use strict";
 
 	function VisibleConsole () {}
 
 	// Static properties
-	VisibleConsole.browserVisibleConsole;
-	VisibleConsole.browserLog;
+	VisibleConsole.browserFallbackConsole;
+	VisibleConsole.browserFallbackLog;
+	VisibleConsole.consolePassiveOutput;
+
+	// DOM Elements & Struct
 	VisibleConsole.consoleEl;
-	VisibleConsole.headerEl;
-	VisibleConsole.consoleInnerEl;
-	VisibleConsole.consoleContainerEl;
-	VisibleConsole.consoleOutputEl;
-	VisibleConsole.consoleInputEl;
-	VisibleConsole.handleEl;
-	VisibleConsole.fallBackIFrame;
-	VisibleConsole.outputContent;
+		VisibleConsole.headerEl;
+		VisibleConsole.consoleInnerEl;
+			VisibleConsole.consoleContainerEl;
+				VisibleConsole.consoleOutputEl;
+				VisibleConsole.consoleInputEl;
+		VisibleConsole.handleEl;
+
 
 	// Static psudo-privates
 	VisibleConsole._isEnabled = false;
+	VisibleConsole._isPassiveLogging = false;
+
 
 	VisibleConsole.enable = function () {
 
@@ -101,64 +105,33 @@
 				VisibleConsole.handleEl.appendChild(VisibleConsole._createline(handleWidth + 1, handleHeight - 11, handleWidth - 10, handleHeight));
 			}
 
-			// Prepare fallback console
-			VisibleConsole.fallBackIFrame = document.getElementById('visibleconsoleiframe');
-			if ( !VisibleConsole.fallBackIFrame ) {
-				VisibleConsole.fallBackIFrame = document.createElement('iframe');
-				VisibleConsole.fallBackIFrame.style.display = 'none';
-				VisibleConsole.fallBackIFrame.id = 'visibleconsoleiframe';
-				document.body.appendChild(VisibleConsole.fallBackIFrame);
-			}
+			// Store for disable
+			if (!VisibleConsole.browserFallbackConsole) VisibleConsole.browserFallbackConsole = window.console;
 
-			// Prepare browserVisibleConsole
-			VisibleConsole.browserVisibleConsole = VisibleConsole.fallBackIFrame.contentWindow.console;
-
-			// Fix native code interpolation error on apply: http://stackoverflow.com/questions/5538972/console-log-apply-not-working-in-ie9
-			if (Function.prototype.bind && VisibleConsole.browserVisibleConsole && typeof VisibleConsole.browserVisibleConsole.log == "object") {
-				VisibleConsole.browserLog = Function.prototype.bind.call(VisibleConsole.browserVisibleConsole.log, VisibleConsole.browserVisibleConsole);
+			// Get passive logging content if it exists
+			if (VisibleConsole.consolePassiveOutput) {
+				VisibleConsole.consoleOutputEl.innerHTML = VisibleConsole.consolePassiveOutput.innerHTML;
+				VisibleConsole.consoleOutputEl.scrollTop = VisibleConsole.consoleOutputEl.scrollHeight;
 			}
 
 			// Ouput to #visibleconsole
 			window.console = {
 				log: function () {
 
-
-					var outputWrapper = document.createElement('span');
-					var textNode;
-					outputWrapper.className = 'visibleconsolemessage';
-
-					for (var i = 0; i < arguments.length; ++i)
-					{
-						// Try to display as a normal string
-						if (typeof(arguments[i]) == 'string') {
-							textNode = document.createTextNode(arguments[i]);
-							outputWrapper.appendChild(textNode);
-						} else {
-							try {
-								textNode = document.createTextNode(JSON.stringify(arguments[i]));
-								outputWrapper.appendChild(textNode);
-							} catch (e) {
-								textNode = document.createTextNode(Object.prototype.toString.call(arguments[i]));
-								outputWrapper.appendChild(textNode);
-							}
-						}
-						if (i < arguments.length - 1) outputWrapper.appendChild(document.createTextNode(' '));
-					}
+					var outputWrapper = VisibleConsole._createLogMessage( arguments );
 
 					VisibleConsole.consoleOutputEl.appendChild(outputWrapper);
 					VisibleConsole.consoleOutputEl.scrollTop = VisibleConsole.consoleOutputEl.scrollHeight;
 
-					// Output to native console
-					if (VisibleConsole.browserLog && VisibleConsole.browserVisibleConsole && VisibleConsole.browserVisibleConsole.log ) {
-						VisibleConsole.browserLog.apply ( null, arguments);
-					}
-
+					if ( VisibleConsole.browserFallbackConsole.log ) VisibleConsole.browserFallbackConsole.log.apply ( VisibleConsole.browserFallbackConsole, arguments );
 				}
 			};
 
 			window.onerror = function (msg, url, linenumber) {
-				window.console.log('<span class="visibleconsoleerror">[ERROR] ' + msg + ' (' + url + ' Line: ' + linenumber + ')</span>');
-				return true;
+				var outputWrapper = VisibleConsole._createErrorMessage ( msg, url, linenumber );
+				VisibleConsole.consoleOutputEl.appendChild(outputWrapper);
+				VisibleConsole.consoleOutputEl.scrollTop = VisibleConsole.consoleOutputEl.scrollHeight;
+				return false;
 			};
 
 			VisibleConsole._resize();
@@ -170,15 +143,102 @@
 		if (VisibleConsole._isEnabled === true) {
 			VisibleConsole._isEnabled = false;
 
-			window.console = VisibleConsole.browserVisibleConsole;
-			window.onerror = VisibleConsole.fallBackIFrame.contentWindow.onerror;
+			if ( VisibleConsole._isPassiveLogging === true) {
+				VisibleConsole._enablePassiveLogger();
+				if (VisibleConsole.consoleOutputEl) VisibleConsole.consolePassiveOutput.innerHTML = VisibleConsole.consoleOutputEl.innerHTML
+			} else {
+				window.console = VisibleConsole.browserFallbackConsole;
+				VisibleConsole.browserFallbackConsole = null;
+			}
 
 			VisibleConsole.consoleEl.parentNode.removeChild(VisibleConsole.consoleEl);
-			VisibleConsole.fallBackIFrame.parentNode.removeChild(VisibleConsole.fallBackIFrame);
 			VisibleConsole.consoleEl = null;
-			VisibleConsole.fallBackIFrame = null;
-			VisibleConsole.browserLog = null;
 		}
+	};
+
+	VisibleConsole.enablePassiveLogging = function () {
+		if (VisibleConsole._isPassiveLogging === false) {
+			VisibleConsole._isPassiveLogging = true;
+
+			if (!VisibleConsole.browserFallbackConsole) VisibleConsole.browserFallbackConsole = window.console;
+
+			if (VisibleConsole._isEnabled !== true) {
+				VisibleConsole._enablePassiveLogger();
+			}
+		}
+	};
+
+	VisibleConsole.disablePassiveLogging = function () {
+		if (VisibleConsole._isPassiveLogging === true) {
+			VisibleConsole._isPassiveLogging = false;
+
+			VisibleConsole.consolePassiveOutput = null;
+
+			if (VisibleConsole._isEnabled !== true) {
+				window.console = VisibleConsole.browserFallbackConsole;
+				VisibleConsole.browserFallbackConsole = null;
+			}
+		}
+	};
+
+	VisibleConsole._enablePassiveLogger = function () {
+
+		VisibleConsole.consolePassiveOutput = document.createElement('div');
+
+		window.console = {
+			log: function () {
+				var outputWrapper = VisibleConsole._createLogMessage( arguments );
+				VisibleConsole.consolePassiveOutput.appendChild(outputWrapper);
+				if ( VisibleConsole.browserFallbackConsole.log ) VisibleConsole.browserFallbackConsole.log.apply ( VisibleConsole.browserFallbackConsole, arguments );
+			}
+		};
+
+		window.onerror = function (msg, url, linenumber) {
+			var outputWrapper = VisibleConsole._createErrorMessage ( msg, url, linenumber );
+			VisibleConsole.consolePassiveOutput.appendChild(outputWrapper);
+			return false;
+		};
+	};
+
+	VisibleConsole._createLogMessage = function ( args ) {
+		var outputWrapper = document.createElement('span');
+		var textNode;
+		outputWrapper.className = 'visibleconsolemessage';
+
+		for (var i = 0; i < args.length; ++i)
+		{
+			// Try to display as a normal string
+			if (typeof(args[i]) == 'string') {
+				textNode = document.createTextNode(args[i]);
+				outputWrapper.appendChild(textNode);
+			} else {
+				try {
+					textNode = document.createTextNode(JSON.stringify(args[i]));
+					outputWrapper.appendChild(textNode);
+				} catch (e) {
+					textNode = document.createTextNode(Object.prototype.toString.call(args[i]));
+					outputWrapper.appendChild(textNode);
+				}
+			}
+			if (i < args.length - 1) outputWrapper.appendChild(document.createTextNode(' '));
+		}
+		return outputWrapper;
+	};
+
+	VisibleConsole._createErrorMessage = function ( msg, url, linenumber ) {
+
+	var outputWrapper = document.createElement('span');
+		outputWrapper.className = 'visibleconsolemessage';
+
+		var errorWrapper = document.createElement('span');
+		errorWrapper.className = 'visibleconsoleerror';
+
+		var textNode = document.createTextNode('[ERROR] ' + msg + ' (' + url + ' Line: ' + linenumber + ')');
+
+		errorWrapper.appendChild(textNode);
+		outputWrapper.appendChild(errorWrapper);
+
+		return outputWrapper;
 	};
 
 	VisibleConsole._createline = function (x1, y1, x2, y2)	{
@@ -186,12 +246,8 @@
 		var isIE = navigator.userAgent.indexOf("MSIE") > -1;
 
 		if (x2 < x1) {
-			var temp = x1;
-			x1 = x2;
-			x2 = temp;
-			temp = y1;
-			y1 = y2;
-			y2 = temp;
+			var temp = x1; x1 = x2; x2 = temp;
+			temp = y1; y1 = y2; y2 = temp;
 		}
 		var line = document.createElement("div");
 		line.className = "visibleconsoleline";
@@ -378,5 +434,5 @@
 
 	window.VisibleConsole = VisibleConsole;
 
-})(window, document);
+})(window, document, navigator);
 
