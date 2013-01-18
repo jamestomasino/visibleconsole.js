@@ -14,14 +14,14 @@
 
 	function VisibleConsole () {}
 
-	// Static properties
-	VisibleConsole.browserFallbackConsole;
-	VisibleConsole.browserFallbackLog;
-	VisibleConsole.consolePassiveOutput;
-
-	VisibleConsole.el = {};
+	VisibleConsole._browserFallbackConsole;
+	VisibleConsole._browserFallbackLog;
+	VisibleConsole._consolePassiveOutput;
+	VisibleConsole._isEnabled = false;
+	VisibleConsole._isPassiveLogging = false;
 
 	// DOM Elements & Struct
+	VisibleConsole.el = {};
 	VisibleConsole.el.console;
 		VisibleConsole.el.header;
 		VisibleConsole.el.inner;
@@ -30,14 +30,7 @@
 				VisibleConsole.el.input;
 		VisibleConsole.el.handle;
 
-
-	// Static psudo-privates
-	VisibleConsole._isEnabled = false;
-	VisibleConsole._isPassiveLogging = false;
-
-
 	VisibleConsole.enable = function () {
-
 		if (VisibleConsole._isEnabled === false) {
 			VisibleConsole._isEnabled = true;
 
@@ -108,27 +101,27 @@
 			}
 
 			// Store for disable
-			if (!VisibleConsole.browserFallbackConsole) VisibleConsole.browserFallbackConsole = window.console;
+			if (!VisibleConsole._browserFallbackConsole) VisibleConsole._browserFallbackConsole = window.console;
 
 			// Get passive logging content if it exists
-			if (VisibleConsole.consolePassiveOutput) {
-				VisibleConsole.el.output.innerHTML = VisibleConsole.consolePassiveOutput.innerHTML;
+			if (VisibleConsole._consolePassiveOutput) {
+				VisibleConsole.el.output.innerHTML = VisibleConsole._consolePassiveOutput.innerHTML;
 				VisibleConsole.el.output.scrollTop = VisibleConsole.el.output.scrollHeight;
 			}
 
-			// Ouput to #visibleconsole
+			// Ouput logs
 			window.console = {
 				log: function () {
-
 					var outputWrapper = VisibleConsole._createLogMessage( arguments );
 
 					VisibleConsole.el.output.appendChild(outputWrapper);
 					VisibleConsole.el.output.scrollTop = VisibleConsole.el.output.scrollHeight;
 
-					if ( VisibleConsole.browserFallbackConsole.log ) VisibleConsole.browserFallbackConsole.log.apply ( VisibleConsole.browserFallbackConsole, arguments );
+					if ( VisibleConsole._browserFallbackConsole.log ) VisibleConsole._browserFallbackConsole.log.apply ( VisibleConsole._browserFallbackConsole, arguments );
 				}
 			};
 
+			// Output errors
 			window.onerror = function (msg, url, linenumber) {
 				var outputWrapper = VisibleConsole._createErrorMessage ( msg, url, linenumber );
 				VisibleConsole.el.output.appendChild(outputWrapper);
@@ -136,6 +129,7 @@
 				return false;
 			};
 
+			// Set proper size and position on enable
 			VisibleConsole._resize();
 			VisibleConsole._move();
 		}
@@ -145,14 +139,16 @@
 		if (VisibleConsole._isEnabled === true) {
 			VisibleConsole._isEnabled = false;
 
+			// If passively logging, transfer console behavior, else kill it
 			if ( VisibleConsole._isPassiveLogging === true) {
 				VisibleConsole._enablePassiveLogger();
-				if (VisibleConsole.el.output) VisibleConsole.consolePassiveOutput.innerHTML = VisibleConsole.el.output.innerHTML
+				if (VisibleConsole.el.output) VisibleConsole._consolePassiveOutput.innerHTML = VisibleConsole.el.output.innerHTML
 			} else {
-				window.console = VisibleConsole.browserFallbackConsole;
-				VisibleConsole.browserFallbackConsole = null;
+				window.console = VisibleConsole._browserFallbackConsole;
+				VisibleConsole._browserFallbackConsole = null;
 			}
 
+			// Remove dom elements
 			VisibleConsole.el.console.parentNode.removeChild(VisibleConsole.el.console);
 			VisibleConsole.el.console = null;
 		}
@@ -162,8 +158,10 @@
 		if (VisibleConsole._isPassiveLogging === false) {
 			VisibleConsole._isPassiveLogging = true;
 
-			if (!VisibleConsole.browserFallbackConsole) VisibleConsole.browserFallbackConsole = window.console;
+			// Store console for disable
+			if (!VisibleConsole._browserFallbackConsole) VisibleConsole._browserFallbackConsole = window.console;
 
+			// Only enable our passive console logger if not actively logging
 			if (VisibleConsole._isEnabled !== true) {
 				VisibleConsole._enablePassiveLogger();
 			}
@@ -174,30 +172,34 @@
 		if (VisibleConsole._isPassiveLogging === true) {
 			VisibleConsole._isPassiveLogging = false;
 
-			VisibleConsole.consolePassiveOutput = null;
+			// Delete passive content
+			VisibleConsole._consolePassiveOutput = null;
 
+			// If there is no active console, kill the passive one
 			if (VisibleConsole._isEnabled !== true) {
-				window.console = VisibleConsole.browserFallbackConsole;
-				VisibleConsole.browserFallbackConsole = null;
+				window.console = VisibleConsole._browserFallbackConsole;
+				VisibleConsole._browserFallbackConsole = null;
 			}
 		}
 	};
 
 	VisibleConsole._enablePassiveLogger = function () {
+		// Create passive log element
+		VisibleConsole._consolePassiveOutput = document.createElement('div');
 
-		VisibleConsole.consolePassiveOutput = document.createElement('div');
-
+		// Set up passive logger
 		window.console = {
 			log: function () {
 				var outputWrapper = VisibleConsole._createLogMessage( arguments );
-				VisibleConsole.consolePassiveOutput.appendChild(outputWrapper);
-				if ( VisibleConsole.browserFallbackConsole.log ) VisibleConsole.browserFallbackConsole.log.apply ( VisibleConsole.browserFallbackConsole, arguments );
+				VisibleConsole._consolePassiveOutput.appendChild(outputWrapper);
+				if ( VisibleConsole._browserFallbackConsole.log ) VisibleConsole._browserFallbackConsole.log.apply ( VisibleConsole._browserFallbackConsole, arguments );
 			}
 		};
 
+		// Set up passive error logger
 		window.onerror = function (msg, url, linenumber) {
 			var outputWrapper = VisibleConsole._createErrorMessage ( msg, url, linenumber );
-			VisibleConsole.consolePassiveOutput.appendChild(outputWrapper);
+			VisibleConsole._consolePassiveOutput.appendChild(outputWrapper);
 			return false;
 		};
 	};
@@ -207,9 +209,9 @@
 		var textNode;
 		outputWrapper.className = 'visibleconsolemessage';
 
+		// Loop through arguments and try to convert each to a string in various ways for display
 		for (var i = 0; i < args.length; ++i)
 		{
-			// Try to display as a normal string
 			if (typeof(args[i]) == 'string') {
 				textNode = document.createTextNode(args[i]);
 				outputWrapper.appendChild(textNode);
@@ -228,25 +230,18 @@
 	};
 
 	VisibleConsole._createErrorMessage = function ( msg, url, linenumber ) {
-
-	var outputWrapper = document.createElement('span');
+		var outputWrapper = document.createElement('span');
 		outputWrapper.className = 'visibleconsolemessage';
-
 		var errorWrapper = document.createElement('span');
 		errorWrapper.className = 'visibleconsoleerror';
-
 		var textNode = document.createTextNode('[ERROR] ' + msg + ' (' + url + ' Line: ' + linenumber + ')');
-
 		errorWrapper.appendChild(textNode);
 		outputWrapper.appendChild(errorWrapper);
-
 		return outputWrapper;
 	};
 
 	VisibleConsole._createline = function (x1, y1, x2, y2)	{
-
 		var isIE = navigator.userAgent.indexOf("MSIE") > -1;
-
 		if (x2 < x1) {
 			var temp = x1; x1 = x2; x2 = temp;
 			temp = y1; y1 = y2; y2 = temp;
@@ -255,7 +250,6 @@
 		line.className = "visibleconsoleline";
 		var length = Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
 		line.style.width = length + "px";
-
 		if (isIE) {
 			line.style.top = (y2 > y1) ? y1 + "px" : y2 + "px";
 			line.style.left = x1 + "px";
@@ -276,6 +270,7 @@
 		document.onmousemove = function(){};
 		document.ontouchend = function(){};
 		document.ontouchmove = function(){};
+
 	};
 
 	VisibleConsole._move = function (xpos, ypos) {
@@ -288,7 +283,6 @@
 			xpos = (width >> 1) - (wholeConsoleWidth >> 1);
 			ypos = (height >> 1) - (wholeConsoleHeight >> 1);
 		}
-
 		VisibleConsole.el.console.style.left = Math.max(xpos,0) + 'px';
 		VisibleConsole.el.console.style.top = Math.max(ypos,0) + 'px';
 	};
@@ -312,9 +306,7 @@
 
 		// Don't track right-clicks
 		if ((evt.keyCode || evt.which) == 3) return;
-
 		VisibleConsole._stopDefault(evt);
-
 		var posX = evt.clientX;
 		var posY = evt.clientY;
 		var divTop = Number(VisibleConsole.el.console.style.top.replace('px',''));
@@ -322,6 +314,7 @@
 		var diffX = posX - divLeft;
 		var diffY = posY - divTop;
 
+		// Handle mouse movement
 		document.onmousemove = function (evt) {
 			VisibleConsole._stopDefault(evt);
 			evt = evt || window.event;
@@ -330,13 +323,13 @@
 			VisibleConsole._move (newX, newY);
 		};
 
+		// Handle mouse up
 		document.onmouseup = document.ontouchend = VisibleConsole._stop;
 	};
 
 	VisibleConsole._startTouchMoving = function (evt) {
 		evt = evt || window.event;
 		VisibleConsole._stopDefault(evt);
-
 		var touch = (typeof (evt.touches) !== 'undefined') ? evt.touches[0] : null;
 		if (touch !== null) {
 			var posX = touch.clientX;
@@ -346,6 +339,7 @@
 			var diffX = posX - divLeft;
 			var diffY = posY - divTop;
 
+			// Handle touch movement
 			document.ontouchmove = function (evt) {
 				VisibleConsole._stopDefault(evt);
 				evt = evt || window.event;
@@ -357,6 +351,7 @@
 				}
 			};
 
+			// Handle touch end
 			document.ontouchend = VisibleConsole._stop;
 		}
 	};
@@ -366,14 +361,11 @@
 
 		// Don't track right-clicks
 		if ((evt.keyCode || evt.which) == 3) return;
-
 		VisibleConsole._stopDefault(evt);
-
 		var posX = evt.clientX;
 		var posY = evt.clientY;
 		var divTop = Number(VisibleConsole.el.console.style.top.replace('px',''));
 		var divLeft = Number(VisibleConsole.el.console.style.left.replace('px',''));
-
 		document.onmousemove = function(evt) {
 			evt = evt || window.event;
 			VisibleConsole._stopDefault(evt);
@@ -387,14 +379,12 @@
 	VisibleConsole._startTouchResizing = function (evt) {
 		evt = evt || window.event;
 		VisibleConsole._stopDefault(evt);
-
 		var touch = (typeof (evt.touches) !== 'undefined') ? evt.touches[0] : null;
 		if (touch !== null) {
 			var posX = touch.clientX;
 			var posY = touch.clientY;
 			var divTop = Number(VisibleConsole.el.console.style.top.replace('px',''));
 			var divLeft = Number(VisibleConsole.el.console.style.left.replace('px',''));
-
 			document.ontouchmove = function(evt) {
 				evt = evt || window.event;
 				VisibleConsole._stopDefault(evt);
@@ -429,10 +419,8 @@
             event.target.value = "";
             eval(theCode);
         }
-        else
-            return true;
+        else return true;
     };
-
 
 	window.VisibleConsole = VisibleConsole;
 
