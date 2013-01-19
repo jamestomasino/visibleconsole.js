@@ -1,5 +1,5 @@
 /*!
- * VisibleConsole v0.3.1
+ * VC v0.4
  * http://github.com/jamestomasino/visibleconsole.js
  *
  * Copyright (c) James Tomasino
@@ -9,191 +9,249 @@
  *
  */
 
-(function(window, document){
+(function(window, document, navigator){
 	"use strict";
 
-	function VisibleConsole () {}
+	function VC () {}
 
-	// Static properties
-	VisibleConsole.browserVisibleConsole;
-	VisibleConsole.browserLog;
-	VisibleConsole.consoleEl;
-	VisibleConsole.headerEl;
-	VisibleConsole.consoleInnerEl;
-	VisibleConsole.consoleContainerEl;
-	VisibleConsole.consoleOutputEl;
-	VisibleConsole.consoleInputEl;
-	VisibleConsole.handleEl;
-	VisibleConsole.fallBackIFrame;
+	VC._fallbackConsole;
+	VC._passiveOutput;
+	VC._isEnabled = false;
+	VC._isPassiveLogging = false;
+	VC._commandHistory = [];
+	VC._commandIndex = 0;
 
-	// Static psudo-privates
-	VisibleConsole._isEnabled = false;
+	// DOM Elements & Struct
+	VC.el = {};
+	VC.el.console;
+		VC.el.header;
+		VC.el.inner;
+			VC.el.container;
+				VC.el.output;
+				VC.el.input;
+		VC.el.handle;
 
-	VisibleConsole.enable = function () {
-
-		if (VisibleConsole._isEnabled === false) {
-			VisibleConsole._isEnabled = true;
+	VC.enable = function () {
+		if (VC._isEnabled === false) {
+			VC._isEnabled = true;
 
 			// Prepare #console element
-			VisibleConsole.consoleEl = document.getElementById('visibleconsole');
-			if ( !VisibleConsole.consoleEl )  {
-				VisibleConsole.consoleEl = document.createElement('div');
-				VisibleConsole.consoleEl.id = 'visibleconsole';
-				document.body.appendChild(VisibleConsole.consoleEl);
+			VC.el.console = document.getElementById('visibleconsole');
+			if ( !VC.el.console )  {
+				VC.el.console = document.createElement('div');
+				VC.el.console.id = 'visibleconsole';
+				document.body.appendChild(VC.el.console);
 			}
 
 			// add the draggable header div
-			VisibleConsole.headerEl = document.getElementById('visibleconsoleheader');
-			if ( !VisibleConsole.headerEl ) {
-				VisibleConsole.headerEl = document.createElement('div');
-				VisibleConsole.headerEl.id = 'visibleconsoleheader';
-				VisibleConsole.headerEl.innerHTML = '~VisibleConsole~';
-				VisibleConsole.headerEl.onmousedown = VisibleConsole._startMoving;
-				VisibleConsole.headerEl.ontouchstart = VisibleConsole._startTouchMoving;
-				document.getElementById('visibleconsole').appendChild(VisibleConsole.headerEl);
+			VC.el.header = document.getElementById('visibleconsoleheader');
+			if ( !VC.el.header ) {
+				VC.el.header = document.createElement('div');
+				VC.el.header.id = 'visibleconsoleheader';
+				VC.el.header.innerHTML = '~VC~';
+				VC.el.header.onmousedown = VC._startMoving;
+				VC.el.header.ontouchstart = VC._startTouchMoving;
+				document.getElementById('visibleconsole').appendChild(VC.el.header);
 			}
 
 			// add the console inner div
-			VisibleConsole.consoleInnerEl = document.getElementById('visibleconsoleinner');
-			if ( !VisibleConsole.consoleInnerEl )  {
-				VisibleConsole.consoleInnerEl = document.createElement('div');
-				VisibleConsole.consoleInnerEl.id = 'visibleconsoleinner';
-				document.getElementById('visibleconsole').appendChild(VisibleConsole.consoleInnerEl);
+			VC.el.inner = document.getElementById('visibleconsoleinner');
+			if ( !VC.el.inner )  {
+				VC.el.inner = document.createElement('div');
+				VC.el.inner.id = 'visibleconsoleinner';
+				document.getElementById('visibleconsole').appendChild(VC.el.inner);
 			}
 
 			// add the visible output container div
-			VisibleConsole.consoleContainerEl = document.getElementById('visibleconsolecontainer');
-			if ( !VisibleConsole.consoleContainerEl )  {
-				VisibleConsole.consoleContainerEl = document.createElement('div');
-				VisibleConsole.consoleContainerEl.id = 'visibleconsolecontainer';
-				document.getElementById('visibleconsoleinner').appendChild(VisibleConsole.consoleContainerEl);
+			VC.el.container = document.getElementById('visibleconsolecontainer');
+			if ( !VC.el.container )  {
+				VC.el.container = document.createElement('div');
+				VC.el.container.id = 'visibleconsolecontainer';
+				document.getElementById('visibleconsoleinner').appendChild(VC.el.container);
 			}
 
 			// add the visible output div
-			VisibleConsole.consoleOutputEl = document.getElementById('visibleconsoleoutput');
-			if ( !VisibleConsole.consoleOutputEl )  {
-				VisibleConsole.consoleOutputEl = document.createElement('div');
-				VisibleConsole.consoleOutputEl.id = 'visibleconsoleoutput';
-				document.getElementById('visibleconsolecontainer').appendChild(VisibleConsole.consoleOutputEl);
+			VC.el.output = document.getElementById('visibleconsoleoutput');
+			if ( !VC.el.output )  {
+				VC.el.output = document.createElement('div');
+				VC.el.output.id = 'visibleconsoleoutput';
+				document.getElementById('visibleconsolecontainer').appendChild(VC.el.output);
 			}
 
 			// add the input
-			VisibleConsole.consoleInputEl = document.getElementById('visibleconsoleinput');
-			if ( !VisibleConsole.consoleInputEl )  {
-				VisibleConsole.consoleInputEl = document.createElement('input');
-				VisibleConsole.consoleInputEl.id = 'visibleconsoleinput';
-				VisibleConsole.consoleInputEl.onkeypress = VisibleConsole._keyPress;
-				document.getElementById('visibleconsolecontainer').appendChild(VisibleConsole.consoleInputEl);
+			VC.el.input = document.getElementById('visibleconsoleinput');
+			if ( !VC.el.input )  {
+				VC.el.input = document.createElement('input');
+				VC.el.input.id = 'visibleconsoleinput';
+				VC.el.input.onkeypress = VC._keyPress;
+				VC.el.input.onkeydown = VC._keyDown;
+				document.getElementById('visibleconsolecontainer').appendChild(VC.el.input);
 			}
 
 			// add the resize handle div
-			VisibleConsole.handleEl = document.getElementById('visibleconsolehandle');
-			if ( !VisibleConsole.handleEl )  {
-				VisibleConsole.handleEl = document.createElement('div');
-				VisibleConsole.handleEl.id = 'visibleconsolehandle';
-				VisibleConsole.handleEl.onmousedown = VisibleConsole._startResizing;
-				VisibleConsole.handleEl.ontouchstart = VisibleConsole._startTouchResizing;
-				document.getElementById('visibleconsole').appendChild(VisibleConsole.handleEl);
-				VisibleConsole.handleEl.appendChild(VisibleConsole._createline(21, 15, 16, 20));
-				VisibleConsole.handleEl.appendChild(VisibleConsole._createline(21, 9, 10, 20));
+			VC.el.handle = document.getElementById('visibleconsolehandle');
+			if ( !VC.el.handle )  {
+				VC.el.handle = document.createElement('div');
+				VC.el.handle.id = 'visibleconsolehandle';
+				VC.el.handle.onmousedown = VC._startResizing;
+				VC.el.handle.ontouchstart = VC._startTouchResizing;
+				document.getElementById('visibleconsole').appendChild(VC.el.handle);
+				var handleWidth = VC.el.handle.offsetWidth;
+				var handleHeight = VC.el.handle.offsetHeight;
+				VC.el.handle.appendChild(VC._createline(handleWidth + 1, handleHeight - 5, handleWidth - 4, handleHeight));
+				VC.el.handle.appendChild(VC._createline(handleWidth + 1, handleHeight - 11, handleWidth - 10, handleHeight));
 			}
 
-			// Prepare fallback console
-			VisibleConsole.fallBackIFrame = document.getElementById('visibleconsoleiframe');
-			if ( !VisibleConsole.fallBackIFrame ) {
-				VisibleConsole.fallBackIFrame = document.createElement('iframe');
-				VisibleConsole.fallBackIFrame.style.display = 'none';
-				VisibleConsole.fallBackIFrame.id = 'visibleconsoleiframe';
-				document.body.appendChild(VisibleConsole.fallBackIFrame);
+			// Store for disable
+			if (!VC._fallbackConsole) VC._fallbackConsole = window.console;
+
+			// Get passive logging content if it exists
+			if (VC._passiveOutput) {
+				VC.el.output.innerHTML = VC._passiveOutput.innerHTML;
+				VC.el.output.scrollTop = VC.el.output.scrollHeight;
 			}
 
-			// Prepare browserVisibleConsole
-			VisibleConsole.browserVisibleConsole = VisibleConsole.fallBackIFrame.contentWindow.console;
-
-			// Fix native code interpolation error on apply: http://stackoverflow.com/questions/5538972/console-log-apply-not-working-in-ie9
-			if (Function.prototype.bind && VisibleConsole.browserVisibleConsole && typeof VisibleConsole.browserVisibleConsole.log == "object") {
-				VisibleConsole.browserLog = Function.prototype.bind.call(VisibleConsole.browserVisibleConsole.log, VisibleConsole.browserVisibleConsole);
-			}
-
-			// Ouput to #visibleconsole
+			// Ouput logs
 			window.console = {
 				log: function () {
+					var outputWrapper = VC._createLogMessage( arguments );
 
-					var output = "<span class='visibleconsolemessage'>", strArg;
+					VC.el.output.appendChild(outputWrapper);
+					VC.el.output.scrollTop = VC.el.output.scrollHeight;
 
-					for (var i = 0; i < arguments.length; ++i)
-					{
-						// Try to display as a normal string
-						if (typeof(arguments[i]) == 'string') {
-							output += arguments[i];
-						} else {
-							try {
-								strArg = JSON.stringify(arguments[i]);
-								output += strArg;
-							} catch (e) {
-								strArg = Object.prototype.toString.call(arguments[i]);
-								output += strArg;
-							}
-						}
-						if (i < arguments.length - 1) output += ' ';
-						else output += "\n";
-					}
-
-					output += "</span>";
-
-					VisibleConsole.consoleOutputEl.innerHTML += output;
-					VisibleConsole.consoleOutputEl.scrollTop = VisibleConsole.consoleOutputEl.scrollHeight;
-
-					// Output to native console
-					if (VisibleConsole.browserLog && VisibleConsole.browserVisibleConsole && VisibleConsole.browserVisibleConsole.log ) {
-						VisibleConsole.browserLog.apply ( null, arguments);
-					}
-
+					if ( VC._fallbackConsole.log ) VC._fallbackConsole.log.apply ( VC._fallbackConsole, arguments );
 				}
 			};
 
+			// Output errors
 			window.onerror = function (msg, url, linenumber) {
-				window.console.log('<span class="visibleconsoleerror">[ERROR] ' + msg + ' (' + url + ' Line: ' + linenumber + ')</span>');
-				return true;
+				var outputWrapper = VC._createErrorMessage ( msg, url, linenumber );
+				VC.el.output.appendChild(outputWrapper);
+				VC.el.output.scrollTop = VC.el.output.scrollHeight;
+				return false;
 			};
 
-			VisibleConsole._resize();
-
+			// Set proper size and position on enable
+			VC._resize();
+			VC._move();
 		}
 	};
 
-	VisibleConsole.disable = function () {
-		if (VisibleConsole._isEnabled === true) {
-			VisibleConsole._isEnabled = false;
+	VC.disable = function () {
+		if (VC._isEnabled === true) {
+			VC._isEnabled = false;
 
-			window.console = VisibleConsole.browserVisibleConsole;
-			window.onerror = VisibleConsole.fallBackIFrame.contentWindow.onerror;
+			// If passively logging, transfer console behavior, else kill it
+			if ( VC._isPassiveLogging === true) {
+				VC._enablePassiveLogger();
+				if (VC.el.output) VC._passiveOutput.innerHTML = VC.el.output.innerHTML
+			} else {
+				window.console = VC._fallbackConsole;
+				VC._fallbackConsole = null;
+			}
 
-			VisibleConsole.consoleEl.parentNode.removeChild(VisibleConsole.consoleEl);
-			VisibleConsole.fallBackIFrame.parentNode.removeChild(VisibleConsole.fallBackIFrame);
-			VisibleConsole.consoleEl = null;
-			VisibleConsole.fallBackIFrame = null;
-			VisibleConsole.browserLog = null;
+			// Remove dom elements
+			VC.el.console.parentNode.removeChild(VC.el.console);
+			VC.el.console = null;
 		}
 	};
 
-	VisibleConsole._createline = function (x1, y1, x2, y2)	{
+	VC.enablePassiveLogging = function () {
+		if (VC._isPassiveLogging === false) {
+			VC._isPassiveLogging = true;
 
+			// Store console for disable
+			if (!VC._fallbackConsole) VC._fallbackConsole = window.console;
+
+			// Only enable our passive console logger if not actively logging
+			if (VC._isEnabled !== true) {
+				VC._enablePassiveLogger();
+			}
+		}
+	};
+
+	VC.disablePassiveLogging = function () {
+		if (VC._isPassiveLogging === true) {
+			VC._isPassiveLogging = false;
+
+			// Delete passive content
+			VC._passiveOutput = null;
+
+			// If there is no active console, kill the passive one
+			if (VC._isEnabled !== true) {
+				window.console = VC._fallbackConsole;
+				VC._fallbackConsole = null;
+			}
+		}
+	};
+
+	VC._enablePassiveLogger = function () {
+		// Create passive log element
+		VC._passiveOutput = document.createElement('div');
+
+		// Set up passive logger
+		window.console = {
+			log: function () {
+				var outputWrapper = VC._createLogMessage( arguments );
+				VC._passiveOutput.appendChild(outputWrapper);
+				if ( VC._fallbackConsole.log ) VC._fallbackConsole.log.apply ( VC._fallbackConsole, arguments );
+			}
+		};
+
+		// Set up passive error logger
+		window.onerror = function (msg, url, linenumber) {
+			var outputWrapper = VC._createErrorMessage ( msg, url, linenumber );
+			VC._passiveOutput.appendChild(outputWrapper);
+			return false;
+		};
+	};
+
+	VC._createLogMessage = function ( args ) {
+		var outputWrapper = document.createElement('span');
+		var textNode;
+		outputWrapper.className = 'visibleconsolemessage';
+
+		// Loop through arguments and try to convert each to a string in various ways for display
+		for (var i = 0; i < args.length; ++i)
+		{
+			if (typeof(args[i]) == 'string') {
+				textNode = document.createTextNode(args[i]);
+				outputWrapper.appendChild(textNode);
+			} else {
+				try {
+					textNode = document.createTextNode(JSON.stringify(args[i]));
+					outputWrapper.appendChild(textNode);
+				} catch (e) {
+					textNode = document.createTextNode(Object.prototype.toString.call(args[i]));
+					outputWrapper.appendChild(textNode);
+				}
+			}
+			if (i < args.length - 1) outputWrapper.appendChild(document.createTextNode(' '));
+		}
+		return outputWrapper;
+	};
+
+	VC._createErrorMessage = function ( msg, url, linenumber ) {
+		var outputWrapper = document.createElement('span');
+		outputWrapper.className = 'visibleconsolemessage';
+		var errorWrapper = document.createElement('span');
+		errorWrapper.className = 'visibleconsoleerror';
+		var textNode = document.createTextNode('[ERROR] ' + msg + ' (' + url + ' Line: ' + linenumber + ')');
+		errorWrapper.appendChild(textNode);
+		outputWrapper.appendChild(errorWrapper);
+		return outputWrapper;
+	};
+
+	VC._createline = function (x1, y1, x2, y2)	{
 		var isIE = navigator.userAgent.indexOf("MSIE") > -1;
-
 		if (x2 < x1) {
-			var temp = x1;
-			x1 = x2;
-			x2 = temp;
-			temp = y1;
-			y1 = y2;
-			y2 = temp;
+			var temp = x1; x1 = x2; x2 = temp;
+			temp = y1; y1 = y2; y2 = temp;
 		}
 		var line = document.createElement("div");
 		line.className = "visibleconsoleline";
 		var length = Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
 		line.style.width = length + "px";
-
 		if (isIE) {
 			line.style.top = (y2 > y1) ? y1 + "px" : y2 + "px";
 			line.style.left = x1 + "px";
@@ -209,136 +267,142 @@
 		return line;
 	};
 
-	VisibleConsole._stop = function () {
+	VC._stop = function () {
 		document.onmouseup = function(){};
 		document.onmousemove = function(){};
 		document.ontouchend = function(){};
 		document.ontouchmove = function(){};
+
 	};
 
-	VisibleConsole._move = function (xpos, ypos) {
-		VisibleConsole.consoleEl.style.left = Math.max(xpos,0) + 'px';
-		VisibleConsole.consoleEl.style.top = Math.max(ypos,0) + 'px';
-	};
-
-	VisibleConsole._resize = function (w, h) {
-		if(w !== null && h !== null) {
-			VisibleConsole.consoleEl.style.pixelWidth = w;
-			VisibleConsole.consoleEl.style.pixelHeight = h;
-			VisibleConsole.consoleEl.style.width = w + 'px';
-			VisibleConsole.consoleEl.style.height = h + 'px';
+	VC._move = function (xpos, ypos) {
+		if (typeof xpos === "undefined" || typeof ypos === "undefined") {
+			var elem = (document.compatMode === "CSS1Compat") ?  document.documentElement : document.body;
+			var height = elem.clientHeight;
+			var width = elem.clientWidth;
+			var wholeConsoleHeight = VC.el.inner.offsetHeight;
+			var wholeConsoleWidth = VC.el.inner.offsetWidth;
+			xpos = (width >> 1) - (wholeConsoleWidth >> 1);
+			ypos = (height >> 1) - (wholeConsoleHeight >> 1);
 		}
-		var wholeConsoleHeight = VisibleConsole.consoleInnerEl.offsetHeight;
-		var	headerHeight = VisibleConsole.headerEl.offsetHeight;
-		var inputHeight = VisibleConsole.consoleInputEl.offsetHeight;
-		var contentHeight = (wholeConsoleHeight - headerHeight - inputHeight);
-		VisibleConsole.consoleOutputEl.style.height = contentHeight + 'px';
+		VC.el.console.style.left = Math.max(xpos,0) + 'px';
+		VC.el.console.style.top = Math.max(ypos,0) + 'px';
 	};
 
-	VisibleConsole._startMoving = function (evt) {
+	VC._resize = function (w, h) {
+		if (typeof w !== "undefined" && typeof h !== "undefined") {
+			VC.el.console.style.pixelWidth = w;
+			VC.el.console.style.pixelHeight = h;
+			VC.el.console.style.width = w + 'px';
+			VC.el.console.style.height = h + 'px';
+		}
+		var wholeConsoleHeight = VC.el.inner.offsetHeight;
+		var headerHeight = VC.el.header.offsetHeight;
+		var inputHeight = VC.el.input.offsetHeight;
+		var contentHeight = (wholeConsoleHeight - headerHeight - inputHeight);
+		VC.el.output.style.height = contentHeight + 'px';
+	};
+
+	VC._startMoving = function (evt) {
 		evt = evt || window.event;
 
 		// Don't track right-clicks
 		if ((evt.keyCode || evt.which) == 3) return;
-
-		VisibleConsole._stopDefault(evt);
-
+		VC._stopDefault(evt);
 		var posX = evt.clientX;
 		var posY = evt.clientY;
-		var divTop = Number(VisibleConsole.consoleEl.style.top.replace('px',''));
-		var divLeft = Number(VisibleConsole.consoleEl.style.left.replace('px',''));
+		var divTop = Number(VC.el.console.style.top.replace('px',''));
+		var divLeft = Number(VC.el.console.style.left.replace('px',''));
 		var diffX = posX - divLeft;
 		var diffY = posY - divTop;
 
+		// Handle mouse movement
 		document.onmousemove = function (evt) {
-			VisibleConsole._stopDefault(evt);
+			VC._stopDefault(evt);
 			evt = evt || window.event;
 			var newX = evt.clientX - diffX;
 			var newY = evt.clientY - diffY;
-			VisibleConsole._move (newX, newY);
+			VC._move (newX, newY);
 		};
 
-		document.onmouseup = document.ontouchend = VisibleConsole._stop;
+		// Handle mouse up
+		document.onmouseup = document.ontouchend = VC._stop;
 	};
 
-	VisibleConsole._startTouchMoving = function (evt) {
+	VC._startTouchMoving = function (evt) {
 		evt = evt || window.event;
-		VisibleConsole._stopDefault(evt);
-
+		VC._stopDefault(evt);
 		var touch = (typeof (evt.touches) !== 'undefined') ? evt.touches[0] : null;
 		if (touch !== null) {
 			var posX = touch.clientX;
 			var posY = touch.clientY;
-			var divTop = Number(VisibleConsole.consoleEl.style.top.replace('px',''));
-			var divLeft = Number(VisibleConsole.consoleEl.style.left.replace('px',''));
+			var divTop = Number(VC.el.console.style.top.replace('px',''));
+			var divLeft = Number(VC.el.console.style.left.replace('px',''));
 			var diffX = posX - divLeft;
 			var diffY = posY - divTop;
 
+			// Handle touch movement
 			document.ontouchmove = function (evt) {
-				VisibleConsole._stopDefault(evt);
+				VC._stopDefault(evt);
 				evt = evt || window.event;
 				var touch = (typeof (evt.touches) !== 'undefined') ? evt.touches[0] : null;
 				if (touch !== null) {
 					var newX = touch.clientX - diffX;
 					var newY = touch.clientY - diffY;
-					VisibleConsole._move (newX, newY);
+					VC._move (newX, newY);
 				}
 			};
 
-			document.ontouchend = VisibleConsole._stop;
+			// Handle touch end
+			document.ontouchend = VC._stop;
 		}
 	};
 
-	VisibleConsole._startResizing = function (evt) {
+	VC._startResizing = function (evt) {
 		evt = evt || window.event;
 
 		// Don't track right-clicks
 		if ((evt.keyCode || evt.which) == 3) return;
-
-		VisibleConsole._stopDefault(evt);
-
+		VC._stopDefault(evt);
 		var posX = evt.clientX;
 		var posY = evt.clientY;
-		var divTop = Number(VisibleConsole.consoleEl.style.top.replace('px',''));
-		var divLeft = Number(VisibleConsole.consoleEl.style.left.replace('px',''));
-
+		var divTop = Number(VC.el.console.style.top.replace('px',''));
+		var divLeft = Number(VC.el.console.style.left.replace('px',''));
 		document.onmousemove = function(evt) {
 			evt = evt || window.event;
-			VisibleConsole._stopDefault(evt);
+			VC._stopDefault(evt);
 			var newW = evt.clientX - divLeft;
 			var newH = evt.clientY - divTop;
-			VisibleConsole._resize(newW, newH);
+			VC._resize(newW, newH);
 		};
-		document.onmouseup = VisibleConsole._stop;
+		document.onmouseup = VC._stop;
 	};
 
-	VisibleConsole._startTouchResizing = function (evt) {
+	VC._startTouchResizing = function (evt) {
 		evt = evt || window.event;
-		VisibleConsole._stopDefault(evt);
-
+		VC._stopDefault(evt);
 		var touch = (typeof (evt.touches) !== 'undefined') ? evt.touches[0] : null;
 		if (touch !== null) {
 			var posX = touch.clientX;
 			var posY = touch.clientY;
-			var divTop = Number(VisibleConsole.consoleEl.style.top.replace('px',''));
-			var divLeft = Number(VisibleConsole.consoleEl.style.left.replace('px',''));
-
+			var divTop = Number(VC.el.console.style.top.replace('px',''));
+			var divLeft = Number(VC.el.console.style.left.replace('px',''));
 			document.ontouchmove = function(evt) {
 				evt = evt || window.event;
-				VisibleConsole._stopDefault(evt);
+				VC._stopDefault(evt);
 				var touch = (typeof (evt.touches) !== 'undefined') ? evt.touches[0] : null;
 				if (touch !== null) {
 					var newW = touch.clientX - divLeft;
 					var newH = touch.clientY - divTop;
 				}
-				VisibleConsole._resize(newW, newH);
+				VC._resize(newW, newH);
 			};
-			document.ontouchend = VisibleConsole._stop;
+			document.ontouchend = VC._stop;
 		}
 	};
 
 
-	VisibleConsole._stopDefault = function (evt) {
+	VC._stopDefault = function (evt) {
 		evt = evt || window.event;
 		if (evt && evt.preventDefault) {
 			evt.preventDefault();
@@ -349,21 +413,56 @@
 		return false;
 	};
 
-	VisibleConsole._keyPress = function (evt) {
+	VC._keyDown = function (evt) {
 		evt = evt || window.event;
         var keyCode = evt ? (evt.which ? evt.which : evt.keyCode) : event.keyCode;
-        if (keyCode == 13) {
-        	var theCode = event.target.value;
-            event.target.value = "";
-            eval(theCode);
+		switch (keyCode) {
+			case 38: // up arrow
+				if (VC._commandIndex > 0) {
+					--VC._commandIndex;
+					var command = VC._commandHistory[VC._commandIndex];
+					VC.el.input.value = command;
+				}
+				evt.preventDefault();
+				break;
+
+			case 40: // down arrow
+				if (VC._commandIndex < VC._commandHistory.length - 1) {
+					++VC._commandIndex;
+					var command = VC._commandHistory[VC._commandIndex];
+					VC.el.input.value = command;
+				}
+				evt.preventDefault();
+				break;
+		}
+	}
+
+	VC._keyPress = function (evt) {
+		evt = evt || window.event;
+        var keyCode = evt ? (evt.which ? evt.which : evt.keyCode) : event.keyCode;
+		switch (keyCode) {
+			case 13:
+				var theCode = event.target.value;
+				event.target.value = "";
+				VC._commandHistory.push (theCode);
+				VC._commandIndex = VC._commandHistory.length;
+
+				switch (theCode) {
+					case 'clear':
+						if (VC._passiveOutput) VC._passiveOutput.innerHTML = '';
+						if (VC.el.output) VC.el.output.innerHTML = '';
+						break;
+					default:
+						eval(theCode);
+				}
+				break;
+			default:
+				return true;
         }
-        else
-            return true;
     };
 
+	window.VisibleConsole = VC;
 
-	window.VisibleConsole = VisibleConsole;
-
-})(window, document);
+})(window, document, navigator);
 
 
