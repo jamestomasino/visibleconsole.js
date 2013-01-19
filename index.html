@@ -15,6 +15,7 @@
 			<p>
 				<button type="button" name="enable" value="" class="logbutton" onclick="enable();">Enable Visible Console</button>
 				<button type="button" name="disable" value="" class="logbutton" onclick="disable()">Disable Visible Console</button>
+				<input type="checkbox" name="passiveLogging" onclick="passiveLogging(this)" /><label for="passiveLogging">Passive Logging</label>
 			</p>
 
 			<p>
@@ -55,6 +56,13 @@
 
 			function enable()  { VisibleConsole.enable(); }
 			function disable() { VisibleConsole.disable(); }
+			function passiveLogging(checkBox) { 
+				if (checkBox.checked) {
+					VisibleConsole.enablePassiveLogging();
+				} else {
+					VisibleConsole.disablePassiveLogging();
+				}
+			}
 		</script>
 	</body>
 </html>
