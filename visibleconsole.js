@@ -418,8 +418,8 @@
             event.target.value = "";
 			switch (theCode) {
 				case 'clear':
-					VisibleConsole._passiveOutput.innerHTML = '';
-					VisibleConsole.el.output.innerHTML = '';
+					if (VisibleConsole._passiveOutput) VisibleConsole._passiveOutput.innerHTML = '';
+					if (VisibleConsole.el.output) VisibleConsole.el.output.innerHTML = '';
 					break;
 				default:
 					eval(theCode);
