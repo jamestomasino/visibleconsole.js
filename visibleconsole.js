@@ -18,6 +18,8 @@
 	VisibleConsole._passiveOutput;
 	VisibleConsole._isEnabled = false;
 	VisibleConsole._isPassiveLogging = false;
+	VisibleConsole._commandHistory = [];
+	VisibleConsole._commandIndex = 0;
 
 	// DOM Elements & Struct
 	VisibleConsole.el = {};
@@ -82,6 +84,7 @@
 				VisibleConsole.el.input = document.createElement('input');
 				VisibleConsole.el.input.id = 'visibleconsoleinput';
 				VisibleConsole.el.input.onkeypress = VisibleConsole._keyPress;
+				VisibleConsole.el.input.onkeydown = VisibleConsole._keyDown;
 				document.getElementById('visibleconsolecontainer').appendChild(VisibleConsole.el.input);
 			}
 
@@ -410,22 +413,52 @@
 		return false;
 	};
 
+	VisibleConsole._keyDown = function (evt) {
+		evt = evt || window.event;
+        var keyCode = evt ? (evt.which ? evt.which : evt.keyCode) : event.keyCode;
+		switch (keyCode) {
+			case 38: // up arrow
+				if (VisibleConsole._commandIndex > 0) {
+					--VisibleConsole._commandIndex;
+					var command = VisibleConsole._commandHistory[VisibleConsole._commandIndex];
+					VisibleConsole.el.input.value = command;
+				}
+				evt.preventDefault();
+				break;
+
+			case 40: // down arrow
+				if (VisibleConsole._commandIndex < VisibleConsole._commandHistory.length - 1) {
+					++VisibleConsole._commandIndex;
+					var command = VisibleConsole._commandHistory[VisibleConsole._commandIndex];
+					VisibleConsole.el.input.value = command;
+				}
+				evt.preventDefault();
+				break;
+		}
+	}
+
 	VisibleConsole._keyPress = function (evt) {
 		evt = evt || window.event;
         var keyCode = evt ? (evt.which ? evt.which : evt.keyCode) : event.keyCode;
-        if (keyCode == 13) {
-        	var theCode = event.target.value;
-            event.target.value = "";
-			switch (theCode) {
-				case 'clear':
-					if (VisibleConsole._passiveOutput) VisibleConsole._passiveOutput.innerHTML = '';
-					if (VisibleConsole.el.output) VisibleConsole.el.output.innerHTML = '';
-					break;
-				default:
-					eval(theCode);
-			}
+		switch (keyCode) {
+			case 13:
+				var theCode = event.target.value;
+				event.target.value = "";
+				VisibleConsole._commandHistory.push (theCode);
+				VisibleConsole._commandIndex = VisibleConsole._commandHistory.length;
+
+				switch (theCode) {
+					case 'clear':
+						if (VisibleConsole._passiveOutput) VisibleConsole._passiveOutput.innerHTML = '';
+						if (VisibleConsole.el.output) VisibleConsole.el.output.innerHTML = '';
+						break;
+					default:
+						eval(theCode);
+				}
+				break;
+			default:
+				return true;
         }
-        else return true;
     };
 
 	window.VisibleConsole = VisibleConsole;
