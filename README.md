@@ -1,7 +1,7 @@
 # visibleconsole.js #
 - - - - -
 
-Current Stable Version: v0.3.1
+Current Stable Version: v0.4
 
 Sometimes you need to see the contents of the console when you don't have access to it. Maybe you're working on an iPad, or a set-top-box, or maybe you've got a need nobody anticipated. This will output the contents of the console to a visible element in your markup.
 
@@ -16,7 +16,7 @@ Include visibleconsole.js in your project. It is recommended that you include yo
 
 	<script src="visibleconsole.js"></script>
 
-### To Enable ####
+### Enable VisibleConsole ####
 
 Call the enable method of VisibleConsole to turn it on.
 
@@ -25,7 +25,7 @@ Call the enable method of VisibleConsole to turn it on.
 *Console logs will only be captured to VisibleConsole after it is enabled.*
 
 
-### To Disable ####
+### Disable VisibleConsole ####
 
 Call the disable method of VisibleConsole to turn it off.
 
@@ -34,11 +34,25 @@ Call the disable method of VisibleConsole to turn it off.
 
 Both all created markup will be removed from your DOM and console operations will be returned to the browser's window.console.log.
 
-### To Input ###
+### Capture Logs While Disabled (Passively) ###
+
+Call the enablePassiveLogging method of VisibleConsole to turn on this feature.
+
+	VisibleConsole.enablePassiveLogging();
+	
+Logs will be captured and maintained even while the VisibleConsole is not visible. When the VisibleConsole is later enabled, you will see all of these logs.
+
+### Stop Capturing Logs Passively ###
+
+Call the disablePassiveLogging method.
+
+	VisibleConsole.disablePassiveLogging();
+
+### Input and Execute Code Interactively ###
 
 Tapping or clicking on the input bar at the bottom of the console will allow you to enter JavaScript commands and eval them, just like in a normal console. Type your command and press `Enter` to execute the line.
 
-### To Style ####
+### Style ####
 
 VisibleConsole [creates a number of elements in your DOM](#Structure) that can be styled with CSS. The included [stylesheet](https://github.com/jamestomasino/visibleconsole.js/blob/master/style.css) shows a full-featured starting point for your customization.
 
@@ -57,7 +71,6 @@ When VisibleConsole is enabled, the following elements are added to the end of y
 		</div>
 		<div id="visibleconsolehandle"></div>
 	</div>
-	<iframe style="display: none;" id="visibleconsoleiframe"></iframe>
 
 
 Messages logged to the console will have the class `visibleconsolemessage`.
@@ -75,9 +88,32 @@ For example:
     	</span>
 	</div>
 
-The iFrame with an id of `#visibleconsoleiframe` is used to maintain ongoing normal console operations, and is leveraged until you disable visibleconsole.js.
 
 *If an element already exists in your DOM with the same ID as one in this structure, VisibleConsole will leverage your existing element. In this way, by manually creating your own structure, you can completely change the way the VisibleConsole is displayed.*
+
+### History ###
+
+##### v0.4 #####
+
+* Optimized logging code via document.createElement and appendChild instead of innerHTML
+* Center on screen on startup
+* Removed iFrame hack for restoring console. Console logs and errors pass through to browser properly now.
+* Passive logging enabled (track logs while VisibleConsole is not enabled)
+* "clear" command will clear the console
+* Up/Down arrow keys cycle through console input history
+
+
+##### v0.3 #####
+
+* Touch events for drag & resize
+* Input bar added
+
+##### v0.2 #####
+
+* Created Demo page
+* Cross-browser functionality and styles
+
+ 
 
 
 ### Dependencies ###
