@@ -1,5 +1,5 @@
 /*!
- * VC v0.4
+ * VisibleConsole v0.4.1
  * http://github.com/jamestomasino/visibleconsole.js
  *
  * Copyright (c) James Tomasino
@@ -48,7 +48,7 @@
 			if ( !VC.el.header ) {
 				VC.el.header = document.createElement('div');
 				VC.el.header.id = 'visibleconsoleheader';
-				VC.el.header.innerHTML = '~VC~';
+				VC.el.header.innerHTML = '~VisibeConsole~';
 				VC.el.header.onmousedown = VC._startMoving;
 				VC.el.header.ontouchstart = VC._startTouchMoving;
 				document.getElementById('visibleconsole').appendChild(VC.el.header);
