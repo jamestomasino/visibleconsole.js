@@ -14,9 +14,8 @@
 
 	function VisibleConsole () {}
 
-	VisibleConsole._browserFallbackConsole;
-	VisibleConsole._browserFallbackLog;
-	VisibleConsole._consolePassiveOutput;
+	VisibleConsole._fallbackConsole;
+	VisibleConsole._passiveOutput;
 	VisibleConsole._isEnabled = false;
 	VisibleConsole._isPassiveLogging = false;
 
@@ -101,11 +100,11 @@
 			}
 
 			// Store for disable
-			if (!VisibleConsole._browserFallbackConsole) VisibleConsole._browserFallbackConsole = window.console;
+			if (!VisibleConsole._fallbackConsole) VisibleConsole._fallbackConsole = window.console;
 
 			// Get passive logging content if it exists
-			if (VisibleConsole._consolePassiveOutput) {
-				VisibleConsole.el.output.innerHTML = VisibleConsole._consolePassiveOutput.innerHTML;
+			if (VisibleConsole._passiveOutput) {
+				VisibleConsole.el.output.innerHTML = VisibleConsole._passiveOutput.innerHTML;
 				VisibleConsole.el.output.scrollTop = VisibleConsole.el.output.scrollHeight;
 			}
 
@@ -117,7 +116,7 @@
 					VisibleConsole.el.output.appendChild(outputWrapper);
 					VisibleConsole.el.output.scrollTop = VisibleConsole.el.output.scrollHeight;
 
-					if ( VisibleConsole._browserFallbackConsole.log ) VisibleConsole._browserFallbackConsole.log.apply ( VisibleConsole._browserFallbackConsole, arguments );
+					if ( VisibleConsole._fallbackConsole.log ) VisibleConsole._fallbackConsole.log.apply ( VisibleConsole._fallbackConsole, arguments );
 				}
 			};
 
@@ -142,10 +141,10 @@
 			// If passively logging, transfer console behavior, else kill it
 			if ( VisibleConsole._isPassiveLogging === true) {
 				VisibleConsole._enablePassiveLogger();
-				if (VisibleConsole.el.output) VisibleConsole._consolePassiveOutput.innerHTML = VisibleConsole.el.output.innerHTML
+				if (VisibleConsole.el.output) VisibleConsole._passiveOutput.innerHTML = VisibleConsole.el.output.innerHTML
 			} else {
-				window.console = VisibleConsole._browserFallbackConsole;
-				VisibleConsole._browserFallbackConsole = null;
+				window.console = VisibleConsole._fallbackConsole;
+				VisibleConsole._fallbackConsole = null;
 			}
 
 			// Remove dom elements
@@ -159,7 +158,7 @@
 			VisibleConsole._isPassiveLogging = true;
 
 			// Store console for disable
-			if (!VisibleConsole._browserFallbackConsole) VisibleConsole._browserFallbackConsole = window.console;
+			if (!VisibleConsole._fallbackConsole) VisibleConsole._fallbackConsole = window.console;
 
 			// Only enable our passive console logger if not actively logging
 			if (VisibleConsole._isEnabled !== true) {
@@ -173,33 +172,33 @@
 			VisibleConsole._isPassiveLogging = false;
 
 			// Delete passive content
-			VisibleConsole._consolePassiveOutput = null;
+			VisibleConsole._passiveOutput = null;
 
 			// If there is no active console, kill the passive one
 			if (VisibleConsole._isEnabled !== true) {
-				window.console = VisibleConsole._browserFallbackConsole;
-				VisibleConsole._browserFallbackConsole = null;
+				window.console = VisibleConsole._fallbackConsole;
+				VisibleConsole._fallbackConsole = null;
 			}
 		}
 	};
 
 	VisibleConsole._enablePassiveLogger = function () {
 		// Create passive log element
-		VisibleConsole._consolePassiveOutput = document.createElement('div');
+		VisibleConsole._passiveOutput = document.createElement('div');
 
 		// Set up passive logger
 		window.console = {
 			log: function () {
 				var outputWrapper = VisibleConsole._createLogMessage( arguments );
-				VisibleConsole._consolePassiveOutput.appendChild(outputWrapper);
-				if ( VisibleConsole._browserFallbackConsole.log ) VisibleConsole._browserFallbackConsole.log.apply ( VisibleConsole._browserFallbackConsole, arguments );
+				VisibleConsole._passiveOutput.appendChild(outputWrapper);
+				if ( VisibleConsole._fallbackConsole.log ) VisibleConsole._fallbackConsole.log.apply ( VisibleConsole._fallbackConsole, arguments );
 			}
 		};
 
 		// Set up passive error logger
 		window.onerror = function (msg, url, linenumber) {
 			var outputWrapper = VisibleConsole._createErrorMessage ( msg, url, linenumber );
-			VisibleConsole._consolePassiveOutput.appendChild(outputWrapper);
+			VisibleConsole._passiveOutput.appendChild(outputWrapper);
 			return false;
 		};
 	};
@@ -417,7 +416,14 @@
         if (keyCode == 13) {
         	var theCode = event.target.value;
             event.target.value = "";
-            eval(theCode);
+			switch (theCode) {
+				case 'clear':
+					if (VisibleConsole._passiveOutput) VisibleConsole._passiveOutput.innerHTML = '';
+					if (VisibleConsole.el.output) VisibleConsole.el.output.innerHTML = '';
+					break;
+				default:
+					eval(theCode);
+			}
         }
         else return true;
     };
