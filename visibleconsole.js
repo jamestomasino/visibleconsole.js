@@ -415,7 +415,7 @@
 
 	VC._keyDown = function (evt) {
 		evt = evt || window.event;
-        var keyCode = evt ? (evt.which ? evt.which : evt.keyCode) : event.keyCode;
+		var keyCode = evt ? (evt.which ? evt.which : evt.keyCode) : event.keyCode;
 		switch (keyCode) {
 			case 38: // up arrow
 				if (VC._commandIndex > 0) {
@@ -439,7 +439,7 @@
 
 	VC._keyPress = function (evt) {
 		evt = evt || window.event;
-        var keyCode = evt ? (evt.which ? evt.which : evt.keyCode) : event.keyCode;
+		var keyCode = evt ? (evt.which ? evt.which : evt.keyCode) : event.keyCode;
 		switch (keyCode) {
 			case 13:
 				var theCode = event.target.value;
