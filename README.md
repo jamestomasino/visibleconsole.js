@@ -1,7 +1,7 @@
 # visibleconsole.js #
 - - - - -
 
-Current Stable Version: v0.3.1
+Current Stable Version: v0.4
 
 Sometimes you need to see the contents of the console when you don't have access to it. Maybe you're working on an iPad, or a set-top-box, or maybe you've got a need nobody anticipated. This will output the contents of the console to a visible element in your markup.
 
@@ -99,6 +99,8 @@ For example:
 * Center on screen on startup
 * Removed iFrame hack for restoring console. Console logs and errors pass through to browser properly now.
 * Passive logging enabled (track logs while VisibleConsole is not enabled)
+* "clear" command will clear the console
+* Up/Down arrow keys cycle through console input history
 
 
 ##### v0.3 #####
