@@ -93,6 +93,10 @@ For example:
 
 ### History ###
 
+##### v0.5 #####
+
+* `disable()` now removes only the elements that were created by `enable()`
+
 ##### v0.4 #####
 
 * Optimized logging code via document.createElement and appendChild instead of innerHTML
