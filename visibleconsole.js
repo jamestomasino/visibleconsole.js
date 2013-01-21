@@ -31,6 +31,15 @@
 				VC.el.input;
 		VC.el.handle;
 
+	// Track what we created so we can remove it
+	VC.el.isCreatedConsole = false;
+	VC.el.isCreatedHeader = false;
+	VC.el.isCreatedInner = false;
+	VC.el.isCreatedContainer = false;
+	VC.el.isCreatedOutput = false;
+	VC.el.isCreatedInput = false;
+	VC.el.isCreatedHandle = false;
+
 	VC.enable = function () {
 		if (VC._isEnabled === false) {
 			VC._isEnabled = true;
@@ -38,6 +47,7 @@
 			// Prepare #console element
 			VC.el.console = document.getElementById('visibleconsole');
 			if ( !VC.el.console )  {
+				VC.el.isCreatedConsole = true;
 				VC.el.console = document.createElement('div');
 				VC.el.console.id = 'visibleconsole';
 				document.body.appendChild(VC.el.console);
@@ -46,6 +56,7 @@
 			// add the draggable header div
 			VC.el.header = document.getElementById('visibleconsoleheader');
 			if ( !VC.el.header ) {
+				VC.el.isCreatedHeader = true;
 				VC.el.header = document.createElement('div');
 				VC.el.header.id = 'visibleconsoleheader';
 				VC.el.header.innerHTML = '~VisibleConsole~';
@@ -57,6 +68,7 @@
 			// add the console inner div
 			VC.el.inner = document.getElementById('visibleconsoleinner');
 			if ( !VC.el.inner )  {
+				VC.el.isCreatedInner = true;
 				VC.el.inner = document.createElement('div');
 				VC.el.inner.id = 'visibleconsoleinner';
 				document.getElementById('visibleconsole').appendChild(VC.el.inner);
@@ -65,6 +77,7 @@
 			// add the visible output container div
 			VC.el.container = document.getElementById('visibleconsolecontainer');
 			if ( !VC.el.container )  {
+				VC.el.isCreatedContainer = true;
 				VC.el.container = document.createElement('div');
 				VC.el.container.id = 'visibleconsolecontainer';
 				document.getElementById('visibleconsoleinner').appendChild(VC.el.container);
@@ -73,6 +86,7 @@
 			// add the visible output div
 			VC.el.output = document.getElementById('visibleconsoleoutput');
 			if ( !VC.el.output )  {
+				VC.el.isCreatedOutput = true;
 				VC.el.output = document.createElement('div');
 				VC.el.output.id = 'visibleconsoleoutput';
 				document.getElementById('visibleconsolecontainer').appendChild(VC.el.output);
@@ -81,6 +95,7 @@
 			// add the input
 			VC.el.input = document.getElementById('visibleconsoleinput');
 			if ( !VC.el.input )  {
+				VC.el.isCreatedInput = true;
 				VC.el.input = document.createElement('input');
 				VC.el.input.id = 'visibleconsoleinput';
 				VC.el.input.onkeypress = VC._keyPress;
@@ -91,6 +106,7 @@
 			// add the resize handle div
 			VC.el.handle = document.getElementById('visibleconsolehandle');
 			if ( !VC.el.handle )  {
+				VC.el.isCreatedHandle = true;
 				VC.el.handle = document.createElement('div');
 				VC.el.handle.id = 'visibleconsolehandle';
 				VC.el.handle.onmousedown = VC._startResizing;
@@ -150,9 +166,42 @@
 				VC._fallbackConsole = null;
 			}
 
-			// Remove dom elements
-			VC.el.console.parentNode.removeChild(VC.el.console);
-			VC.el.console = null;
+			// Remove dom elements in reverse order
+			if ( VC.el.isCreatedOutput ) {
+				VC.el.output.parentNode.removeChild(VC.el.output);
+				VC.el.output = null;
+				VC.el.isCreatedOutput = false;
+			}
+			if ( VC.el.isCreatedInput ) {
+				VC.el.input.parentNode.removeChild(VC.el.input);
+				VC.el.input = null;
+				VC.el.isCreatedInput = false;
+			}
+			if ( VC.el.isCreatedContainer ) {
+				VC.el.container.parentNode.removeChild(VC.el.container);
+				VC.el.container = null;
+				VC.el.isCreatedContainer = false;
+			}
+			if ( VC.el.isCreatedInner ) {
+				VC.el.inner.parentNode.removeChild(VC.el.inner);
+				VC.el.inner = null;
+				VC.el.isCreatedInner = false;
+			}
+			if ( VC.el.isCreatedHeader ) {
+				VC.el.header.parentNode.removeChild(VC.el.header);
+				VC.el.header = null;
+				VC.el.isCreatedHeader = false;
+			}
+			if ( VC.el.isCreatedHandle ) {
+				VC.el.handle.parentNode.removeChild(VC.el.handle);
+				VC.el.handle = null;
+				VC.el.isCreatedHandle = false;
+			}
+			if ( VC.el.isCreatedConsole ) {
+				VC.el.console.parentNode.removeChild(VC.el.console);
+				VC.el.console = null;
+				VC.el.isCreatedConsole = false;
+			}
 		}
 	};
 
