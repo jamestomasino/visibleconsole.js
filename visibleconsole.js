@@ -60,10 +60,10 @@
 				VC.el.header = document.createElement('div');
 				VC.el.header.id = 'visibleconsoleheader';
 				VC.el.header.innerHTML = '~VisibleConsole~';
-				VC.el.header.onmousedown = VC._startMoving;
-				VC.el.header.ontouchstart = VC._startTouchMoving;
 				document.getElementById('visibleconsole').appendChild(VC.el.header);
 			}
+			VC.el.header.onmousedown = VC._startMoving;
+			VC.el.header.ontouchstart = VC._startTouchMoving;
 
 			// add the console inner div
 			VC.el.inner = document.getElementById('visibleconsoleinner');
@@ -98,10 +98,10 @@
 				VC.el.isCreatedInput = true;
 				VC.el.input = document.createElement('input');
 				VC.el.input.id = 'visibleconsoleinput';
-				VC.el.input.onkeypress = VC._keyPress;
-				VC.el.input.onkeydown = VC._keyDown;
 				document.getElementById('visibleconsolecontainer').appendChild(VC.el.input);
 			}
+			VC.el.input.onkeypress = VC._keyPress;
+			VC.el.input.onkeydown = VC._keyDown;
 
 			// add the resize handle div
 			VC.el.handle = document.getElementById('visibleconsolehandle');
@@ -109,14 +109,14 @@
 				VC.el.isCreatedHandle = true;
 				VC.el.handle = document.createElement('div');
 				VC.el.handle.id = 'visibleconsolehandle';
-				VC.el.handle.onmousedown = VC._startResizing;
-				VC.el.handle.ontouchstart = VC._startTouchResizing;
 				document.getElementById('visibleconsole').appendChild(VC.el.handle);
-				var handleWidth = VC.el.handle.offsetWidth;
-				var handleHeight = VC.el.handle.offsetHeight;
-				VC.el.handle.appendChild(VC._createline(handleWidth + 1, handleHeight - 5, handleWidth - 4, handleHeight));
-				VC.el.handle.appendChild(VC._createline(handleWidth + 1, handleHeight - 11, handleWidth - 10, handleHeight));
 			}
+			VC.el.handle.onmousedown = VC._startResizing;
+			VC.el.handle.ontouchstart = VC._startTouchResizing;
+			var handleWidth = VC.el.handle.offsetWidth;
+			var handleHeight = VC.el.handle.offsetHeight;
+			VC.el.handle.appendChild(VC._createline(handleWidth + 1, handleHeight - 5, handleWidth - 4, handleHeight));
+			VC.el.handle.appendChild(VC._createline(handleWidth + 1, handleHeight - 11, handleWidth - 10, handleHeight));
 
 			// Store for disable
 			if (!VC._fallbackConsole) VC._fallbackConsole = window.console;
