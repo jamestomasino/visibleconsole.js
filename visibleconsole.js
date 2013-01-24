@@ -46,7 +46,7 @@
 
 			// Prepare #console element
 			VC.el.console = document.getElementById('visibleconsole');
-			if ( !VC.el.console )  {
+			if ( typeof(VC.el.console) == 'undefined' || VC.el.console == null )  {
 				VC.el.isCreatedConsole = true;
 				VC.el.console = document.createElement('div');
 				VC.el.console.id = 'visibleconsole';
@@ -55,7 +55,7 @@
 
 			// add the draggable header div
 			VC.el.header = document.getElementById('visibleconsoleheader');
-			if ( !VC.el.header ) {
+			if ( typeof(VC.el.header) == 'undefined' || VC.el.header == null ) {
 				VC.el.isCreatedHeader = true;
 				VC.el.header = document.createElement('div');
 				VC.el.header.id = 'visibleconsoleheader';
@@ -67,7 +67,7 @@
 
 			// add the console inner div
 			VC.el.inner = document.getElementById('visibleconsoleinner');
-			if ( !VC.el.inner )  {
+			if ( typeof(VC.el.inner) == 'undefined' || VC.el.inner == null )  {
 				VC.el.isCreatedInner = true;
 				VC.el.inner = document.createElement('div');
 				VC.el.inner.id = 'visibleconsoleinner';
@@ -76,7 +76,7 @@
 
 			// add the visible output container div
 			VC.el.container = document.getElementById('visibleconsolecontainer');
-			if ( !VC.el.container )  {
+			if ( typeof(VC.el.container) == 'undefined' || VC.el.container == null )  {
 				VC.el.isCreatedContainer = true;
 				VC.el.container = document.createElement('div');
 				VC.el.container.id = 'visibleconsolecontainer';
@@ -85,7 +85,7 @@
 
 			// add the visible output div
 			VC.el.output = document.getElementById('visibleconsoleoutput');
-			if ( !VC.el.output )  {
+			if ( typeof(VC.el.output) == 'undefined' || VC.el.output == null )  {
 				VC.el.isCreatedOutput = true;
 				VC.el.output = document.createElement('div');
 				VC.el.output.id = 'visibleconsoleoutput';
@@ -94,7 +94,7 @@
 
 			// add the input
 			VC.el.input = document.getElementById('visibleconsoleinput');
-			if ( !VC.el.input )  {
+			if ( typeof(VC.el.input ) == 'undefined' || VC.el.input == null )  {
 				VC.el.isCreatedInput = true;
 				VC.el.input = document.createElement('input');
 				VC.el.input.id = 'visibleconsoleinput';
@@ -105,7 +105,7 @@
 
 			// add the resize handle div
 			VC.el.handle = document.getElementById('visibleconsolehandle');
-			if ( !VC.el.handle )  {
+			if ( typeof(VC.el.handle ) == 'undefined' || VC.el.handle == null )  {
 				VC.el.isCreatedHandle = true;
 				VC.el.handle = document.createElement('div');
 				VC.el.handle.id = 'visibleconsolehandle';
@@ -514,3 +514,4 @@
 
 })(window, document, navigator);
 
+VisibleConsole.enablePassiveLogging();
