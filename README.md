@@ -7,7 +7,7 @@ Sometimes you need to see the contents of the console when you don't have access
 
 ## Example ##
 
-Take a look at a working example [here](http://jamestomasino.github.com/visibleconsole.js/).
+Take a look at a working example [here](http://jamestomasino.github.io/visibleconsole.js/).
 
 
 ## Usage ###
